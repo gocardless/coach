@@ -1,5 +1,5 @@
-require "spec_helper"
-require "coach/middleware"
+require 'rspec'
+require 'coach/middleware'
 
 # Middleware stubbing ######################################
 

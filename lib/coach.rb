@@ -13,4 +13,7 @@ require_relative 'coach/router'
 require_relative 'coach/version'
 
 module Coach
+  def self.require_matchers!
+    require_relative 'spec/matchers'
+  end
 end

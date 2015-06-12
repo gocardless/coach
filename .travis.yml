@@ -7,8 +7,6 @@ rvm:
 
 sudo: false
 
-services: mongodb
-
 script:
   - bundle exec rubocop
   - bundle exec rspec
