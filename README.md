@@ -1,5 +1,9 @@
 # Coach
 
+[![Gem Version](https://badge.fury.io/rb/coach.svg)](http://badge.fury.io/rb/coach)
+[![Build Status](https://travis-ci.org/gocardless/coach.png?branch=master)](https://travis-ci.org/gocardless/coach)
+[![Code Climate](https://codeclimate.com/github/gocardless/coach.png)](https://codeclimate.com/github/gocardless/coach)
+
 Coach improves your controller code by encouraging...
 
 - **Modularity** - No more tangled `before_filter`'s and interdependent concerns. Build
