@@ -1,0 +1,123 @@
+# For all options see https://github.com/bbatsov/rubocop/tree/master/config
+
+# Limit lines to 90 characters.
+LineLength:
+  Max: 90
+
+ClassLength:
+  Enabled: false
+
+ModuleLength:
+  Enabled: false
+
+# Avoid methods longer than 30 lines of code
+MethodLength:
+  CountComments: false  # count full line comments?
+  Max: 87
+
+# Avoid single-line methods.
+SingleLineMethods:
+  AllowIfMethodIsEmpty: true
+
+StringLiterals:
+  Enabled: false
+
+GlobalVars:
+  Enabled: false # We use them Redis + StatsD (though maybe we shouldn't?)
+
+# Wants underscores in all large numbers. Pain in the ass for things like
+# unix timestamps.
+NumericLiterals:
+  Enabled: false
+
+# Wants you to use the same argument names for every reduce. This seems kinda
+# naff compared to naming them semantically
+SingleLineBlockParams:
+  Enabled: false
+
+Style/SignalException:
+  EnforcedStyle: 'only_raise'
+
+# Use trailing rather than leading dots on multi-line call chains
+Style/DotPosition:
+  EnforcedStyle: trailing
+
+Lint/NestedMethodDefinition:
+  Enabled: false
+
+Lint/UnusedBlockArgument:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 61
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/PerceivedComplexity:
+  Max: 10
+
+Style/AccessorMethodName:
+  Enabled: false
+
+# Allow non-ASCII characters (e.g. £) in comments
+Style/AsciiComments:
+  Enabled: false
+
+# Configuration parameters: EnforcedHashRocketStyle, EnforcedColonStyle, EnforcedLastArgumentHashStyle, SupportedLastArgumentHashStyles.
+Style/AlignHash:
+  Enabled: false
+
+# Configuration parameters: EnforcedStyle, SupportedStyles, ProceduralMethods, FunctionalMethods, IgnoredMethods.
+Style/BlockDelimiters:
+  Enabled: false
+
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/ClosingParenthesisIndentation:
+  Enabled: false
+
+# Configuration parameters: Keywords.
+Style/CommentAnnotation:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/DoubleNegation:
+  Enabled: false
+
+# Configuration parameters: MinBodyLength.
+Style/GuardClause:
+  Enabled: false
+
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/IndentHash:
+  Enabled: false
+
+Style/Lambda:
+  Enabled: false
+
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/MultilineOperationIndentation:
+  Enabled: false
+
+# Configuration parameters: NamePrefix, NamePrefixBlacklist.
+Style/PredicateName:
+  Enabled: false
+
+Style/RedundantSelf:
+  Enabled: false
+
+Style/SingleSpaceBeforeFirstArg:
+  Enabled: false
+
+# Configuration parameters: MultiSpaceAllowedForOperators.
+Style/SpaceAroundOperators:
+  Enabled: false
+
+# Configuration parameters: ExactNameMatch, AllowPredicates, AllowDSLWriters, IgnoreClassMethods, Whitelist.
+Style/TrivialAccessors:
+  Enabled: false
