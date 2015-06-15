@@ -8,8 +8,8 @@ Coach improves your controller code by encouraging...
 
 - **Modularity** - No more tangled `before_filter`'s and interdependent concerns. Build
   Middleware that does a single job, and does it well.
-- **Guarantees** - Work with a simple `provide`/`require` interface to guarantee that the
-  data you need in your endpoint is loaded before your app even boots.
+- **Guarantees** - Work with a simple `provide`/`require` interface to guarantee that your
+  middlewares load data in the right order when you first boot your app.
 - **Testability** - Test each middleware in isolation, with effortless mocking of test
   data and natural RSpec matchers.
 
@@ -132,7 +132,7 @@ end
 
 Each middleware declares what it requires from those that have ran before it, and what it
 will provide to those that run after. Whenever a middleware chain is mounted, these
-promises will be verified. In the above, if our `Whoami` middleware had neglected to use
+requirements will be verified. In the above, if our `Whoami` middleware had neglected to use
 `AuthenticatedUser`, then mounting would fail with the error...
 
     Coach::Errors::MiddlewareDependencyNotMet: AuthenticatedUser requires keys [authenticated_user] that are not provided by the middleware chain
