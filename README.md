@@ -13,129 +13,129 @@ Coach improves your controller code by encouraging:
 - **Testability** - Test each middleware in isolation, with effortless mocking of test
   data and natural RSpec matchers.
 
-## Simple endpoint
+## Coach by example
 
-Lets start by creating a simple endpoint.
+The best way to see the benefits of Coach is with a demonstration.
+
+### Mounting an endpoint
 
 ```ruby
-module Routes
-  class Echo < Coach::Middleware
-    def call
-      # All middleware should return rack compliant responses
-      [ 200, {}, [params[:word]] ]
-    end
+class HelloWorld < Coach::Middleware
+  def call
+    # Middleware return a Rack response
+    [ 200, {}, ['hello world'] ]
   end
 end
 ```
 
-Any Middlewares have access to the `request` handle, which is an instance of
-`ActionDispatch::Request`. This also parses the request params, and these are made
-available inside Middlewares as `params`.
+So we've created ourselves a piece of middleware, `HelloWorld`. As you'd expect,
+`HelloWorld` simply outputs the string `'hello world'`.
 
-In an example Rails app, called `Example`, we can mount this route like so:
+In an example Rails app, called `Example`, we can mount this route like so...
 
 ```ruby
 Example::Application.routes.draw do
-  match "/echo/:word",
-        to: Coach::Handler.new(Routes::Echo),
+  match "/hello_world",
+        to: Coach::Handler.new(HelloWorld),
         via: :get
 end
 ```
 
-Once booting Rails locally, running `curl -XGET http://localhost:3000/echo/hello` should
-respond with `'hello'`.
+Once you've booted Rails locally, the following should return `'hello world'`:
 
-## Building chains
+```sh
+$ curl -XGET http://localhost:3000/hello_world
+```
 
-Lets try creating a route protected by authentication.
+### Building chains
+
+Suppose we didn't want just anybody to see our `HelloWorld` endpoint. In fact, we'd like
+to lock it down behind some authentication.
+
+Our request will now have two stages, one where we check authentication details and
+another where we respond with our secret greeting to the world. Let's split into two
+pieces, one for each of the two subtasks, allowing us to reuse this authentication flow in
+other middlewares.
 
 ```ruby
-module Routes
-  class Secret < Coach::Middleware
-    def call
-      unless User.exists?(id: params[:user_id], password: params[:user_password])
-        return [ 401, {}, ['Access denied'] ]
-      end
-
-      [ 200, {}, ['super-secretness'] ]
+class Authentication < Coach::Middleware
+  def call
+    unless User.exists?(login: params[:login])
+      return [ 401, {}, ['Access denied'] ]
     end
+
+    next_middleware.call
+  end
+end
+
+class HelloWorld < Coach::Middleware
+  uses Authentication
+
+  def call
+    [ 200, {}, ['hello world'] ]
   end
 end
 ```
 
-The above will verify that a user can be found with the given params, and if it cannot
-then will respond with a `401`.
+Here we detach the authentication logic into its own middleware. `HelloWorld` now `uses`
+`Authentication`, and will only run if it has been called via `next_middleware.call` from
+authentication.
 
-This does what we want it to do, but why should `Secret` know anything about
-authentication? This complicates `Secret`'s design and prevents reuse of authentication
-logic.
+Notice we also use `params` just like you would in a normal Rails controller. Every
+middleware class will have access to a `request` object, which is an instance of
+`ActionDispatch::Request`.
+
+### Passing data through middleware
+
+So far we've demonstrated how Coach can help you break your controller code into modular
+pieces. The big innovation with Coach, however, is the ability to explicitly pass your
+data through the middleware chain.
+
+An example usage here is to create a `HelloUser` endpoint. We want to protect the route by
+authentication, as we did before, but this time greet the user that is logged in. Making
+a small modification to the `Authentication` middleware we showed above...
 
 ```ruby
-module Middleware
-  class Authentication < Coach::Middleware
-    def call
-      unless User.exists?(id: params[:user_id], password: params[:user_password])
-        return [ 401, {}, ['Access denied'] ]
-      end
+class Authentication < Coach::Middleware
+  provides :user  # declare that Authentication provides :user
 
-      next_middleware.call
-    end
+  def call
+    return [ 401, {}, ['Access denied'] ] unless user.present?
+
+    provide(user: user)
+    next_middleware.call
+  end
+
+  def user
+    @user ||= User.find_by(login: params[:login])
   end
 end
 
-module Routes
-  class Secret < Coach::Middleware
-    uses Middleware::Authentication
+class HelloUser < Coach::Middleware
+  uses Authentication
+  requires :user  # state that HelloUser requires this data
 
-    def call
-      [ 200, {}, ['super-secretness'] ]
-    end
+  def call
+    # Can now access `user`, as it's been provided by Authentication
+    [ 200, {}, [ "hello #{user.name}" ] ]
   end
+end
+
+# Inside config/routes.rb
+Example::Application.routes.draw do
+  match "/hello_user",
+        to: Coach::Handler.new(HelloUser),
+        via: :get
 end
 ```
 
-Here we detach the authentication logic into it's own middleware. `Secret` now `uses`
-`Middleware::Authentication`, and will only run if it has been called via
-`next_middleware.call` from authentication.
-
-## Passing data through middleware
-
-Now what happens if you have an endpoint that returns the current auth'd users details? We
-can maintain the separation of authentication logic and endpoint as below:
+Coach analyses your middleware chains whenever a new `Handler` is created. If any
+middleware `requires :x` when its chain does not provide `:x`, we'll error out before the
+app even starts with the error:
 
 ```ruby
-module Middleware
-  class AuthenticatedUser < Coach::Middleware
-    provides :authenticated_user
-
-    def call
-      user = User.find_by(token: request.headers['Authorization'])
-      return [ 401, {}, ['Access denied'] ] unless user.exists?
-
-      provide(authenticated_user: user)
-      next_middleware.call
-    end
-  end
-end
-
-module Routes
-  class Whoami < Coach::Middleware
-    uses AuthenticatedUser
-    requires :authenticated_user
-
-    def call
-      [ 200, {}, [authenticated_user.name] ]
-    end
-  end
-end
+Coach::Errors::MiddlewareDependencyNotMet: HelloUser requires keys [user] that are not provided by the middleware chain
 ```
-
-Each middleware declares what it requires from those that have ran before it, and what it
-will provide to those that run after. Whenever a middleware chain is mounted, these
-requirements will be verified. In the above, if our `Whoami` middleware had neglected to use
-`AuthenticatedUser`, then mounting would fail with the error:
-
-    Coach::Errors::MiddlewareDependencyNotMet: AuthenticatedUser requires keys [authenticated_user] that are not provided by the middleware chain
 
 This static verification eradicates an entire category of errors that stem from implicitly
 running code before hitting controller methods. It allows you to be confident that the
