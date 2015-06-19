@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/gocardless/coach.png?branch=master)](https://travis-ci.org/gocardless/coach)
 [![Code Climate](https://codeclimate.com/github/gocardless/coach.png)](https://codeclimate.com/github/gocardless/coach)
 
-Coach improves your controller code by encouraging...
+Coach improves your controller code by encouraging:
 
 - **Modularity** - No more tangled `before_filter`'s and interdependent concerns. Build
   Middleware that does a single job, and does it well.
@@ -32,7 +32,7 @@ Any Middlewares have access to the `request` handle, which is an instance of
 `ActionDispatch::Request`. This also parses the request params, and these are made
 available inside Middlewares as `params`.
 
-In an example Rails app, called `Example`, we can mount this route like so...
+In an example Rails app, called `Example`, we can mount this route like so:
 
 ```ruby
 Example::Application.routes.draw do
@@ -101,7 +101,7 @@ Here we detach the authentication logic into it's own middleware. `Secret` now `
 ## Passing data through middleware
 
 Now what happens if you have an endpoint that returns the current auth'd users details? We
-can maintain the separation of authentication logic and endpoint as below...
+can maintain the separation of authentication logic and endpoint as below:
 
 ```ruby
 module Middleware
@@ -133,7 +133,7 @@ end
 Each middleware declares what it requires from those that have ran before it, and what it
 will provide to those that run after. Whenever a middleware chain is mounted, these
 requirements will be verified. In the above, if our `Whoami` middleware had neglected to use
-`AuthenticatedUser`, then mounting would fail with the error...
+`AuthenticatedUser`, then mounting would fail with the error:
 
     Coach::Errors::MiddlewareDependencyNotMet: AuthenticatedUser requires keys [authenticated_user] that are not provided by the middleware chain
 
@@ -213,7 +213,7 @@ router.draw(Routes::Users,
 ```
 
 Default actions that conform to standard REST principles can be easily loaded, with the
-users resource being mapped to...
+users resource being mapped to:
 
 | Method | URL                          | Description                                    |
 |--------|------------------------------|------------------------------------------------|
