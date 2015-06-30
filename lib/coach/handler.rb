@@ -25,7 +25,8 @@ module Coach
 
       finish = Time.now
       publish('coach.handler.finish',
-              start, finish, nil, start_event.merge(response: { status: response[0] }))
+              start, finish, nil,
+              start_event.merge(response: { status: response[0], headers: response[1] }))
 
       response
     end
