@@ -15,6 +15,10 @@ module Coach
     end
 
     def self.provides(*new_provided)
+      if new_provided.include?(:_metadata)
+        raise 'Cannot provide :_metadata, Coach uses this internally!'
+      end
+
       provided.concat(new_provided)
       provided.uniq!
     end
@@ -74,6 +78,12 @@ module Coach
         ActiveSupport::Notifications.
           instrument('coach.middleware.finish', middleware_event) { call }
       end
+    end
+
+    # Adds key-values to metadata, to be published with coach events.
+    def log_metadata(**values)
+      @_context[:_metadata] ||= {}
+      @_context[:_metadata].merge!(values)
     end
 
     # Helper to access request params from within middleware
