@@ -5,6 +5,13 @@ describe Coach::Middleware do
   let(:context_) { {} }
   let(:middleware_obj) { middleware_class.new(context_, nil) }
 
+  describe ".provides" do
+    it "blows up if providing a reserved keyword" do
+      expect { middleware_class.provides(:_metadata) }.
+        to raise_exception(/cannot provide.* coach uses this/i)
+    end
+  end
+
   describe ".provides?" do
     context "given names it does provide" do
       before { middleware_class.provides(:foo, :bar) }

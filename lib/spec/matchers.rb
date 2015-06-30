@@ -12,6 +12,7 @@ def build_middleware(name)
 
     def call
       config[:callback].call if config.include?(:callback)
+      log_metadata(Hash[name.to_sym, true])
 
       # Build up a list of middleware called, in the order they were called
       if next_middleware

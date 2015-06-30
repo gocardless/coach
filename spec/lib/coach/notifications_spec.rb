@@ -48,10 +48,18 @@ describe Coach::Notifications do
       expect(middleware_event).not_to be_nil
     end
 
-    it "broadcasts event containing all middleware that have been run" do
-      handler.call({})
-      middleware_names = middleware_event[:chain].map { |item| item[:name] }
-      expect(middleware_names).to include(*%w(Terminal A B))
+    describe "coach.request event" do
+      before { handler.call({}) }
+
+      it "contains all middleware that have been run" do
+        middleware_names = middleware_event[:chain].map { |item| item[:name] }
+        expect(middleware_names).to include(*%w(Terminal A B))
+      end
+
+      it "includes all logged metadata" do
+        expect(middleware_event).
+          to include(metadata: { A: true, B: true, Terminal: true })
+      end
     end
   end
 
