@@ -56,7 +56,7 @@ describe Coach::MiddlewareValidator do
       context "at terminal" do
         before { head_middleware.requires :a, :c }
 
-        it { is_expected.to raise_exception(/requires keys \[a,c\]/) }
+        it { is_expected.to raise_exception(/missing \[:a, :c\]/) }
       end
 
       context "from unordered middleware" do
@@ -65,7 +65,7 @@ describe Coach::MiddlewareValidator do
           middleware_b.provides :b
         end
 
-        it { is_expected.to raise_exception(/requires keys \[b\]/) }
+        it { is_expected.to raise_exception(/missing \[:b\]/) }
       end
     end
   end

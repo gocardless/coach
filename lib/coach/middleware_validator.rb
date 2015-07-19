@@ -2,8 +2,9 @@ require "coach/errors"
 
 module Coach
   class MiddlewareValidator
-    def initialize(middleware, already_provided = [])
+    def initialize(middleware, previous_middlewares = [], already_provided = [])
       @middleware = middleware
+      @previous_middlewares = previous_middlewares.clone
       @already_provided = already_provided
     end
 
@@ -12,7 +13,7 @@ module Coach
     def validated_provides!
       if missing_requirements.any?
         raise Coach::Errors::MiddlewareDependencyNotMet.new(
-          @middleware, missing_requirements
+          @middleware, @previous_middlewares, missing_requirements
         )
       end
 
@@ -21,15 +22,20 @@ module Coach
 
     private
 
+    attr_reader :previous_middlewares
+
     def missing_requirements
       @middleware.requirements - provided_by_chain
     end
 
     def provided_by_chain
-      @provided_by_chain ||=
-        middleware_dependencies.reduce(@already_provided) do |provided, middleware|
-          provided + self.class.new(middleware, provided).validated_provides!
-        end.flatten.uniq
+      @provided_by_chain ||= begin
+        initial = [@already_provided, @previous_middlewares]
+        middleware_dependencies.reduce(initial) do |(provided, previous), middleware|
+          validator = self.class.new(middleware, previous, provided)
+          [provided + validator.validated_provides!, previous + [middleware]]
+        end.first.flatten.uniq
+      end
     end
 
     def middleware_dependencies
