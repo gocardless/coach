@@ -11,21 +11,30 @@ module Coach
     end
 
     def build_middleware(context, successor)
-      @middleware.new(context, successor && successor.instrument, @config)
-    end
-
-    # Requires tweaking to make it run methods by symbol on the class from which the
-    # `uses` call is made.
-    def use_with_context?(context)
-      return true if @config[:if].nil?
-      return @config[:if].call(context) if @config[:if].respond_to?(:call)
-      middleware.send(@config[:if], context)
+      @middleware.
+        new(context,
+            successor && successor.instrument,
+            config_for_successor(successor))
     end
 
     # Runs validation against the middleware chain, raising if any unmet dependencies are
     # discovered.
     def validate!
       MiddlewareValidator.new(middleware).validated_provides!
+    end
+
+    private
+
+    def config_for_successor(successor)
+      if lambda_config?
+        @config.call(successor && successor.config || {})
+      else
+        @config.clone
+      end
+    end
+
+    def lambda_config?
+      @config.respond_to?(:call)
     end
   end
 end
