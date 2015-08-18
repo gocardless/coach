@@ -8,6 +8,7 @@ describe Coach::Handler do
   let(:middleware_a) { build_middleware("A") }
   let(:middleware_b) { build_middleware("B") }
   let(:middleware_c) { build_middleware("C") }
+  let(:middleware_d) { build_middleware("D") }
 
   let(:terminal_middleware) { build_middleware("Terminal") }
   let(:handler) { Coach::Handler.new(terminal_middleware) }
@@ -98,10 +99,11 @@ describe Coach::Handler do
 
     context "with inheriting config" do
       before { middleware_b.uses(middleware_c, ->(config) { config.slice(:b) }) }
+      before { middleware_b.uses(middleware_d) }
 
       it "calls lambda with parent middlewares config" do
         expect(handler.build_request_chain(sequence, {}).call).
-          to eq(%w(A{} C{:b=>true} B{:b=>true} Terminal))
+          to eq(%w(A{} C{:b=>true} D{} B{:b=>true} Terminal))
       end
     end
   end

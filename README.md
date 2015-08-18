@@ -142,6 +142,34 @@ running code before hitting controller methods. It allows you to be confident th
 data you require has been loaded, and makes tracing the origin of that data as simple as
 looking up the chain.
 
+## Configuring middlewares
+
+By making use of middleware config hashes, you can build generalised middlewares that can
+be configured specifically for the chain that they are used in.
+
+```ruby
+class Logger < Coach::Middleware
+  def call
+    # Logs the incoming request path, with a configured prefix
+    Rails.logger.info("[#{config[:prefix]}] - #{request.path}")
+  end
+end
+
+class HelloUser < Coach::Middleware
+  uses Logger, prefix: 'HelloUser'
+  uses Authentication
+
+  def call
+    ...
+  end
+end
+```
+
+The above configures a `Logger` middleware to prefix it's log entries with `'HelloUser'`.
+This is a contrived example, but at GoCardless we've created middlewares that can act as
+generalised resource endpoints (show, index, etc) when given the model class and some
+extra configuration.
+
 ## Testing
 
 The basic strategy is to test each middleware in isolation, covering all the edge cases,

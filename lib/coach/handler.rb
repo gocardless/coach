@@ -40,11 +40,11 @@ module Coach
     # Traverse the middlware tree to build a linear middleware sequence,
     # containing only middlewares that apply to this request.
     def build_sequence(item, context)
-      sequence = item.middleware.middleware_dependencies.flat_map do |child_item|
-        build_sequence(child_item, context)
+      sequence = item.middleware.middleware_dependencies.map do |child_item|
+        build_sequence(child_item.set_parent(item), context)
       end
 
-      dedup_sequence(sequence + [item])
+      dedup_sequence([*sequence, item].flatten)
     end
 
     # Given a middleware sequence, filter out items not applicable to the
