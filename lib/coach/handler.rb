@@ -40,21 +40,18 @@ module Coach
     # Traverse the middlware tree to build a linear middleware sequence,
     # containing only middlewares that apply to this request.
     def build_sequence(item, context)
-      sub_sequence = item.middleware.middleware_dependencies
-      filtered_sub_sequence = filter_sequence(sub_sequence, context)
-      flattened_sub_sequence = filtered_sub_sequence.flat_map do |child_item|
-        build_sequence(child_item, context)
+      sequence = item.middleware.middleware_dependencies.map do |child_item|
+        build_sequence(child_item.set_parent(item), context)
       end
 
-      dedup_sequence(flattened_sub_sequence + [item])
+      dedup_sequence([*sequence, item].flatten)
     end
 
     # Given a middleware sequence, filter out items not applicable to the
     # current request, and set up a chain of instantiated middleware objects,
     # ready to serve a request.
     def build_request_chain(sequence, context)
-      chain_items = filter_sequence(sequence, context)
-      chain_items.reverse.reduce(nil) do |successor, item|
+      sequence.reverse.reduce(nil) do |successor, item|
         item.build_middleware(context, successor)
       end
     end
@@ -70,12 +67,6 @@ module Coach
     # config, leaving only the first instance
     def dedup_sequence(sequence)
       sequence.uniq { |item| [item.class, item.middleware, item.config] }
-    end
-
-    # Filter out middleware items that don't apply to this request - i.e. those
-    # that have defined an `if` condition that doesn't match this context.
-    def filter_sequence(sequence, context)
-      sequence.select { |item| item.use_with_context?(context) }
     end
 
     # Event to send for start of handler

@@ -16,7 +16,7 @@ def build_middleware(name)
 
       # Build up a list of middleware called, in the order they were called
       if next_middleware
-        [name].concat(next_middleware.call)
+        [name + config.except(:callback).inspect.to_s].concat(next_middleware.call)
       else
         [name]
       end

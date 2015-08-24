@@ -8,6 +8,7 @@ describe Coach::Handler do
   let(:middleware_a) { build_middleware("A") }
   let(:middleware_b) { build_middleware("B") }
   let(:middleware_c) { build_middleware("C") }
+  let(:middleware_d) { build_middleware("D") }
 
   let(:terminal_middleware) { build_middleware("Terminal") }
   let(:handler) { Coach::Handler.new(terminal_middleware) }
@@ -25,7 +26,7 @@ describe Coach::Handler do
       result = handler.call({})
       expect(a_spy).to have_received(:call)
       expect(b_spy).to have_received(:call)
-      expect(result).to eq(%w(A B Terminal))
+      expect(result).to eq(%w(A{} B{} Terminal))
     end
   end
 
@@ -79,27 +80,31 @@ describe Coach::Handler do
 
   describe "#build_request_chain" do
     before { terminal_middleware.uses(middleware_a) }
-    before { terminal_middleware.uses(middleware_b, if: ->(ctx) { false }) }
-    before { terminal_middleware.uses(middleware_c) }
+    before { terminal_middleware.uses(middleware_b, b: true) }
 
     let(:root_item) { Coach::MiddlewareItem.new(terminal_middleware) }
     let(:sequence) { handler.build_sequence(root_item, {}) }
 
     it "instantiates all matching middleware items in the sequence" do
       expect(middleware_a).to receive(:new)
-      expect(middleware_c).to receive(:new)
+      expect(middleware_b).to receive(:new)
       expect(terminal_middleware).to receive(:new)
-      handler.build_request_chain(sequence, {})
-    end
-
-    it "doesn't instantiate non-matching middleware items" do
-      expect(middleware_b).not_to receive(:new)
       handler.build_request_chain(sequence, {})
     end
 
     it "sets up the chain correctly, calling each item in the correct order" do
       expect(handler.build_request_chain(sequence, {}).call).
-        to eq(%w(A C Terminal))
+        to eq(%w(A{} B{:b=>true} Terminal))
+    end
+
+    context "with inheriting config" do
+      before { middleware_b.uses(middleware_c, ->(config) { config.slice(:b) }) }
+      before { middleware_b.uses(middleware_d) }
+
+      it "calls lambda with parent middlewares config" do
+        expect(handler.build_request_chain(sequence, {}).call).
+          to eq(%w(A{} C{:b=>true} D{} B{:b=>true} Terminal))
+      end
     end
   end
 
