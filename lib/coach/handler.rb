@@ -2,8 +2,8 @@ require "coach/errors"
 
 module Coach
   class Handler
-    def initialize(middleware)
-      @root_item = MiddlewareItem.new(middleware)
+    def initialize(middleware, config = {})
+      @root_item = MiddlewareItem.new(middleware, config)
       validate!
     rescue Coach::Errors::MiddlewareDependencyNotMet => error
       # Remove noise of validation stack trace, reset to the handler callsite

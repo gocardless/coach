@@ -14,11 +14,13 @@ def build_middleware(name)
       config[:callback].call if config.include?(:callback)
       log_metadata(Hash[name.to_sym, true])
 
+      response = [name + config.except(:callback).inspect.to_s]
+
       # Build up a list of middleware called, in the order they were called
       if next_middleware
-        [name + config.except(:callback).inspect.to_s].concat(next_middleware.call)
+        response.concat(next_middleware.call)
       else
-        [name]
+        response
       end
     end
   end

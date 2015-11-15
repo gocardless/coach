@@ -11,7 +11,7 @@ describe Coach::Handler do
   let(:middleware_d) { build_middleware("D") }
 
   let(:terminal_middleware) { build_middleware("Terminal") }
-  let(:handler) { Coach::Handler.new(terminal_middleware) }
+  let(:handler) { Coach::Handler.new(terminal_middleware, handler: true) }
 
   before { Coach::Notifications.unsubscribe! }
 
@@ -26,7 +26,7 @@ describe Coach::Handler do
       result = handler.call({})
       expect(a_spy).to have_received(:call)
       expect(b_spy).to have_received(:call)
-      expect(result).to eq(%w(A{} B{} Terminal))
+      expect(result).to eq(%w(A{} B{} Terminal{:handler=>true}))
     end
   end
 
@@ -94,7 +94,7 @@ describe Coach::Handler do
 
     it "sets up the chain correctly, calling each item in the correct order" do
       expect(handler.build_request_chain(sequence, {}).call).
-        to eq(%w(A{} B{:b=>true} Terminal))
+        to eq(%w(A{} B{:b=>true} Terminal{}))
     end
 
     context "with inheriting config" do
@@ -103,7 +103,7 @@ describe Coach::Handler do
 
       it "calls lambda with parent middlewares config" do
         expect(handler.build_request_chain(sequence, {}).call).
-          to eq(%w(A{} C{:b=>true} D{} B{:b=>true} Terminal))
+          to eq(%w(A{} C{:b=>true} D{} B{:b=>true} Terminal{}))
       end
     end
   end
@@ -123,10 +123,9 @@ describe Coach::Handler do
 
       subject(:coach_events) do
         events = []
-        subscription =
-          ActiveSupport::Notifications.subscribe(/coach/) do |name, *args|
-            events << name
-          end
+        subscription = ActiveSupport::Notifications.subscribe(/coach/) do |name, *args|
+          events << name
+        end
 
         handler.call({})
         ActiveSupport::Notifications.unsubscribe(subscription)
