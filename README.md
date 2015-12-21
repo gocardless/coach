@@ -224,20 +224,22 @@ end
 ## Routing
 
 For routes that represent resource actions, Coach provides some syntactic sugar to
-allow concise mapping of endpoint to handler.
+allow concise mapping of endpoint to handler in Rails apps.
 
 ```ruby
-router = Coach::Router.new(Example::Application)
-
-router.draw(Routes::Users,
-            base: "/users",
-            actions: [
-              :index,
-              :show,
-              :create,
-              :update,
-              disable: { method: :post, url: "/:id/actions/disable" }
-            ])
+# config/routes.rb
+Example::Application.routes.draw do
+  router = Coach::Router.new(self)
+  router.draw(Routes::Users,
+              base: "/users",
+              actions: [
+                :index,
+                :show,
+                :create,
+                :update,
+                disable: { method: :post, url: "/:id/actions/disable" }
+              ])
+end
 ```
 
 Default actions that conform to standard REST principles can be easily loaded, with the

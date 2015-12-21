@@ -4,8 +4,8 @@ require 'coach/router'
 require 'coach/handler'
 
 describe Coach::Router do
-  subject(:router) { described_class.new(app) }
-  let(:app) { double(:rails_app, routes: double(draw: nil)) }
+  subject(:router) { described_class.new(mapper) }
+  let(:mapper) { double(:mapper) }
 
   before do
     allow(Coach::Handler).to receive(:new) { |route| route }
@@ -26,12 +26,12 @@ describe Coach::Router do
     let(:actions) { [action] }
 
     it "correctly mounts url for :#{action}" do
-      expect(router).to receive(:match).with(params[:url], anything)
+      expect(mapper).to receive(:match).with(params[:url], anything)
       draw
     end
 
     it "correctly mounts on method for :#{action}" do
-      expect(router).to receive(:match).
+      expect(mapper).to receive(:match).
         with(anything, hash_including(via: params[:method]))
       draw
     end
@@ -54,7 +54,7 @@ describe Coach::Router do
       context "with no slash" do
         let(:custom_url) { ':id/refund' }
         it "mounts correct url" do
-          expect(router).to receive(:match).with('/resource/:id/refund', anything)
+          expect(mapper).to receive(:match).with('/resource/:id/refund', anything)
           draw
         end
       end
@@ -62,7 +62,7 @@ describe Coach::Router do
       context "with multiple /'s" do
         let(:custom_url) { '//:id/refund' }
         it "mounts correct url" do
-          expect(router).to receive(:match).with('/resource/:id/refund', anything)
+          expect(mapper).to receive(:match).with('/resource/:id/refund', anything)
           draw
         end
       end
