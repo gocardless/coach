@@ -6,7 +6,6 @@ require 'coach/version'
 Gem::Specification.new do |spec|
   spec.name          = 'coach'
   spec.version       = Coach::VERSION
-  spec.date          = '2015-06-12'
   spec.summary       = 'coach middleware'
   spec.description   = 'Controller framework'
   spec.authors       = %w(GoCardless)
