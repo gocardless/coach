@@ -11,8 +11,8 @@ module Coach
       destroy: { method: :delete, url: ':id' }
     }.each_value(&:freeze).freeze
 
-    def initialize(app)
-      @app = app
+    def initialize(mapper)
+      @mapper = mapper
     end
 
     def draw(routes, base: nil, as: nil, constraints: nil, actions: [])
@@ -27,9 +27,7 @@ module Coach
     end
 
     def match(url, **args)
-      @app.routes.draw do
-        match url, args
-      end
+      @mapper.match(url, args)
     end
 
     private
