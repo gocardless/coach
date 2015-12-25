@@ -35,7 +35,7 @@ module Coach
         method: @request.method,
         path: request_path,
         format: @request.format.try(:ref),
-        params: @request.filtered_parameters,  # uses config.filter_parameters
+        params: @request.filtered_parameters, # uses config.filter_parameters
 
         # Extra request info
         headers: filtered_headers,

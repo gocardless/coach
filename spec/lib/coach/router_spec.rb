@@ -18,7 +18,7 @@ describe Coach::Router do
       class Create; end
       class Update; end
       class Destroy; end
-      class Refund; end  # custom
+      class Refund; end # custom
     end
   end
 

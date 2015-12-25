@@ -12,7 +12,7 @@ module Coach
     end
 
     def notify(name, start, finish)
-      event =  { name: name, start: start, finish: finish }
+      event = { name: name, start: start, finish: finish }
 
       duration_of_children = child_events_for(event).
         inject(0) { |total, e| total + e[:duration] }
