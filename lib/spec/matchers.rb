@@ -47,7 +47,7 @@ end
 
 RSpec::Matchers.define :respond_with_body_that_matches do |body_regex|
   match do |middleware|
-    @response_body = middleware.call.third.join
+    @response_body = middleware.call[2].join
     @response_body.match(body_regex)
   end
 
@@ -58,7 +58,7 @@ end
 
 RSpec::Matchers.define :respond_with_envelope do |envelope, keys = []|
   match do |middleware|
-    @response = JSON.parse(middleware.call.third.join)
+    @response = JSON.parse(middleware.call[2].join)
     expect(@response).to include(envelope.to_s)
 
     @envelope = @response[envelope.to_s].with_indifferent_access
