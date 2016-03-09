@@ -1,3 +1,7 @@
+# 0.4.1 / 2016-03-09
+
+* [https://github.com/gocardless/coach/pull/10] Removed a dependency that Coach's RSpec matchers had on Rails' `.third` array method.
+
 # 0.4.0 / 2015-12-21
 
 * `Coach::Router.new` now accepts a `ActionDispatch::Routing::Mapper`, rather
