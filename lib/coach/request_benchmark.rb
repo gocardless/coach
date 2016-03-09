@@ -15,7 +15,7 @@ module Coach
       event = { name: name, start: start, finish: finish }
 
       duration_of_children = child_events_for(event).
-        inject(0) { |total, e| total + e[:duration] }
+                             inject(0) { |total, e| total + e[:duration] }
       event[:duration] = (finish - start) - duration_of_children
 
       @events.push(event)

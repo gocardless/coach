@@ -111,7 +111,7 @@ Style/PredicateName:
 Style/RedundantSelf:
   Enabled: false
 
-Style/SingleSpaceBeforeFirstArg:
+Style/Style/SpaceBeforeFirstArg:
   Enabled: false
 
 # Configuration parameters: MultiSpaceAllowedForOperators.
