@@ -1,3 +1,7 @@
+# 0.4.2 / 2016-05-07
+
+* [https://github.com/gocardless/coach/pull/13] Add support for Rails 5.
+
 # 0.4.1 / 2016-03-09
 
 * [https://github.com/gocardless/coach/pull/10] Removed a dependency that Coach's RSpec matchers had on Rails' `.third` array method.
