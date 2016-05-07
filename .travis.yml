@@ -1,12 +1,23 @@
 language: ruby
 
+sudo: false
+
 rvm:
   - 2.3.0
-  - 2.2
+  - 2.2.4
   - 2.1
   - 2.0.0
 
-sudo: false
+env:
+  - "RAILS_VERSION=4.2.6"
+  - "RAILS_VERSION=5.0.0.rc1"
+
+matrix:
+  exclude:
+    - rvm: 2.1
+      env: "RAILS_VERSION=5.0.0.rc1"
+    - rvm: 2.0.0
+      env: "RAILS_VERSION=5.0.0.rc1"
 
 script:
   - bundle exec rubocop
