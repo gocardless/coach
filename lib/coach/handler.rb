@@ -7,7 +7,7 @@ module Coach
       validate!
     rescue Coach::Errors::MiddlewareDependencyNotMet => error
       # Remove noise of validation stack trace, reset to the handler callsite
-      error.backtrace.clear.push(*Thread.current.backtrace)
+      error.backtrace.clear.concat(Thread.current.backtrace)
       raise error
     end
 
@@ -30,9 +30,9 @@ module Coach
       finish = Time.now
       publish('coach.handler.finish',
               start, finish, nil,
-              start_event.merge(
-                response: { status: response[0] },
-                metadata: context.fetch(:_metadata, {})))
+              start_event.
+                merge(response: { status: response[0] },
+                      metadata: context.fetch(:_metadata, {})))
 
       response
     end
@@ -54,6 +54,10 @@ module Coach
       sequence.reverse.reduce(nil) do |successor, item|
         item.build_middleware(context, successor)
       end
+    end
+
+    def inspect
+      "#<Coach::Handler[#{@root_item.middleware.name}]>"
     end
 
     private

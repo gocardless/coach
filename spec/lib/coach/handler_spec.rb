@@ -11,7 +11,7 @@ describe Coach::Handler do
   let(:middleware_d) { build_middleware("D") }
 
   let(:terminal_middleware) { build_middleware("Terminal") }
-  let(:handler) { Coach::Handler.new(terminal_middleware, handler: true) }
+  subject(:handler) { Coach::Handler.new(terminal_middleware, handler: true) }
 
   before { Coach::Notifications.unsubscribe! }
 
@@ -138,5 +138,9 @@ describe Coach::Handler do
       it { is_expected.to include('coach.middleware.finish') }
       it { is_expected.to include('coach.handler.finish') }
     end
+  end
+
+  describe "#inspect" do
+    its(:inspect) { is_expected.to eql('#<Coach::Handler[Terminal]>') }
   end
 end
