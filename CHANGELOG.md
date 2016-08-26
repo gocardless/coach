@@ -1,3 +1,7 @@
+# 0.4.3 / 2016-05-07
+
+* [https://github.com/gocardless/coach/pull/15] Clean up `Coach::Handler#inspect`
+
 # 0.4.2 / 2016-05-07
 
 * [https://github.com/gocardless/coach/pull/13] Add support for Rails 5.
