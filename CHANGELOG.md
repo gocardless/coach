@@ -1,3 +1,7 @@
+# 0.4.4 / 2016-08-26
+
+* [https://github.com/gocardless/coach/pull/16] Fix middleware lookup issue in router
+
 # 0.4.3 / 2016-05-07
 
 * [https://github.com/gocardless/coach/pull/15] Clean up `Coach::Handler#inspect`
