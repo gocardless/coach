@@ -12,14 +12,11 @@ describe Coach::Router do
   end
 
   let(:resource_routes) do
-    Module.new do
-      class Index; end
-      class Show; end
-      class Create; end
-      class Update; end
-      class Destroy; end
-      class Refund; end # custom
+    routes_module = Module.new
+    [:Index, :Show, :Create, :Update, :Destroy, :Refund].each do |class_name|
+      routes_module.const_set(class_name, Class.new)
     end
+    routes_module
   end
 
   shared_examples "mount action" do |action, params|
@@ -72,6 +69,14 @@ describe Coach::Router do
       let(:actions) { [:unknown] }
       it "raises RouterUnknownDefaultAction" do
         expect { draw }.to raise_error(Coach::Errors::RouterUnknownDefaultAction)
+      end
+    end
+
+    context "with unknown action that clashes with a global constant name" do
+      let(:actions) { [process: { method: :post, url: ":id/process" }] }
+
+      it "raises NameError" do
+        expect { draw }.to raise_error(NameError)
       end
     end
   end

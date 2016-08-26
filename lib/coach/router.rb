@@ -17,7 +17,10 @@ module Coach
 
     def draw(routes, base: nil, as: nil, constraints: nil, actions: [])
       action_traits(actions).each do |action, traits|
-        route = routes.const_get(camel(action))
+        # Passing false to const_get prevents it searching ancestors until a
+        # match is found. Without this, globally defined constants such as
+        # `Process` will be picked up before consts that need to be autoloaded.
+        route = routes.const_get(camel(action), false)
         match(action_url(base, traits),
               to: Handler.new(route),
               via: traits[:method],
