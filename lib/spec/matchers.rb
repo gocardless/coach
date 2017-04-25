@@ -1,4 +1,4 @@
-require 'rspec'
+require 'rspec/expectations'
 require 'coach/middleware'
 
 # Middleware stubbing ######################################
