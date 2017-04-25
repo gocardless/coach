@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rspec/its'
 require 'pry'
 require_relative '../lib/coach'

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "coach/middleware"
 
 describe Coach::Middleware do

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "coach/errors"
 require "coach/middleware_validator"
 
