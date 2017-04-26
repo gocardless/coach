@@ -1,3 +1,9 @@
+# 0.4.5 / 2017-04-26
+
+* [https://github.com/gocardless/coach/pull/17] Only require rspec/expectations
+  when adding new matchers
+* [https://github.com/gocardless/coach/pull/18] Properly pin version of rubocop
+
 # 0.4.4 / 2016-08-26
 
 * [https://github.com/gocardless/coach/pull/16] Fix middleware lookup issue in router
