@@ -152,6 +152,7 @@ class Logger < Coach::Middleware
   def call
     # Logs the incoming request path, with a configured prefix
     Rails.logger.info("[#{config[:prefix]}] - #{request.path}")
+    next_middleware.call
   end
 end
 
