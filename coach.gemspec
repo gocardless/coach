@@ -1,4 +1,5 @@
 # coding: utf-8
+
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'coach/version'
@@ -8,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.version       = Coach::VERSION
   spec.summary       = 'coach middleware'
   spec.description   = 'Controller framework'
-  spec.authors       = %w(GoCardless)
+  spec.authors       = %w[GoCardless]
   spec.homepage      = "https://github.com/gocardless/coach"
-  spec.email         = %w(developers@gocardless.com)
+  spec.email         = %w[developers@gocardless.com]
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")

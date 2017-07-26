@@ -13,7 +13,7 @@ describe Coach::Router do
 
   let(:resource_routes) do
     routes_module = Module.new
-    [:Index, :Show, :Create, :Update, :Destroy, :Refund].each do |class_name|
+    %i[Index Show Create Update Destroy Refund].each do |class_name|
       routes_module.const_set(class_name, Class.new)
     end
     routes_module

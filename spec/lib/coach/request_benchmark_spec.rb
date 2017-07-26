@@ -36,7 +36,7 @@ describe Coach::RequestBenchmark do
 
     it "correctly orders chain" do
       chain_names = stats[:chain].map { |item| item[:name] }
-      expect(chain_names).to eq %w(A B)
+      expect(chain_names).to eq %w[A B]
     end
   end
 end
