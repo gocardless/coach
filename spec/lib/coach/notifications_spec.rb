@@ -53,7 +53,7 @@ describe Coach::Notifications do
 
       it "contains all middleware that have been run" do
         middleware_names = middleware_event[:chain].map { |item| item[:name] }
-        expect(middleware_names).to include(*%w(Terminal A B))
+        expect(middleware_names).to include('Terminal', 'A', 'B')
       end
 
       it "includes all logged metadata" do

@@ -4,26 +4,13 @@
 LineLength:
   Max: 90
 
-ClassLength:
-  Enabled: false
-
-ModuleLength:
-  Enabled: false
-
 # Avoid methods longer than 30 lines of code
 MethodLength:
   CountComments: false  # count full line comments?
-  Max: 87
-
-# Avoid single-line methods.
-SingleLineMethods:
-  AllowIfMethodIsEmpty: true
+  Max: 15
 
 StringLiterals:
   Enabled: false
-
-GlobalVars:
-  Enabled: false # We use them Redis + StatsD (though maybe we shouldn't?)
 
 # Wants underscores in all large numbers. Pain in the ass for things like
 # unix timestamps.
@@ -39,7 +26,7 @@ Style/SignalException:
   EnforcedStyle: 'only_raise'
 
 # Use trailing rather than leading dots on multi-line call chains
-Style/DotPosition:
+Layout/DotPosition:
   EnforcedStyle: trailing
 
 Lint/NestedMethodDefinition:
@@ -65,7 +52,7 @@ Style/AsciiComments:
   Enabled: false
 
 # Configuration parameters: EnforcedHashRocketStyle, EnforcedColonStyle, EnforcedLastArgumentHashStyle, SupportedLastArgumentHashStyles.
-Style/AlignHash:
+Layout/AlignHash:
   Enabled: false
 
 # Configuration parameters: EnforcedStyle, SupportedStyles, ProceduralMethods, FunctionalMethods, IgnoredMethods.
@@ -76,7 +63,7 @@ Style/BlockDelimiters:
 Style/ClassAndModuleChildren:
   Enabled: false
 
-Style/ClosingParenthesisIndentation:
+Layout/ClosingParenthesisIndentation:
   Enabled: false
 
 # Configuration parameters: Keywords.
@@ -94,14 +81,14 @@ Style/GuardClause:
   Enabled: false
 
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/IndentHash:
+Layout/IndentHash:
   Enabled: false
 
 Style/Lambda:
   Enabled: false
 
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/MultilineOperationIndentation:
+Layout/MultilineOperationIndentation:
   Enabled: false
 
 # Configuration parameters: NamePrefix, NamePrefixBlacklist.
@@ -111,13 +98,16 @@ Style/PredicateName:
 Style/RedundantSelf:
   Enabled: false
 
-Style/SpaceBeforeFirstArg:
+Layout/SpaceBeforeFirstArg:
   Enabled: false
 
 # Configuration parameters: MultiSpaceAllowedForOperators.
-Style/SpaceAroundOperators:
+Layout/SpaceAroundOperators:
   Enabled: false
 
 # Configuration parameters: ExactNameMatch, AllowPredicates, AllowDSLWriters, IgnoreClassMethods, Whitelist.
 Style/TrivialAccessors:
   Enabled: false
+
+Metrics/BlockLength:
+  Max: 110
