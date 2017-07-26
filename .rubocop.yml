@@ -39,7 +39,7 @@ Style/SignalException:
   EnforcedStyle: 'only_raise'
 
 # Use trailing rather than leading dots on multi-line call chains
-Style/DotPosition:
+Layout/DotPosition:
   EnforcedStyle: trailing
 
 Lint/NestedMethodDefinition:
@@ -65,7 +65,7 @@ Style/AsciiComments:
   Enabled: false
 
 # Configuration parameters: EnforcedHashRocketStyle, EnforcedColonStyle, EnforcedLastArgumentHashStyle, SupportedLastArgumentHashStyles.
-Style/AlignHash:
+Layout/AlignHash:
   Enabled: false
 
 # Configuration parameters: EnforcedStyle, SupportedStyles, ProceduralMethods, FunctionalMethods, IgnoredMethods.
@@ -76,7 +76,7 @@ Style/BlockDelimiters:
 Style/ClassAndModuleChildren:
   Enabled: false
 
-Style/ClosingParenthesisIndentation:
+Layout/ClosingParenthesisIndentation:
   Enabled: false
 
 # Configuration parameters: Keywords.
@@ -94,14 +94,14 @@ Style/GuardClause:
   Enabled: false
 
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/IndentHash:
+Layout/IndentHash:
   Enabled: false
 
 Style/Lambda:
   Enabled: false
 
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/MultilineOperationIndentation:
+Layout/MultilineOperationIndentation:
   Enabled: false
 
 # Configuration parameters: NamePrefix, NamePrefixBlacklist.
@@ -111,11 +111,11 @@ Style/PredicateName:
 Style/RedundantSelf:
   Enabled: false
 
-Style/SpaceBeforeFirstArg:
+Layout/SpaceBeforeFirstArg:
   Enabled: false
 
 # Configuration parameters: MultiSpaceAllowedForOperators.
-Style/SpaceAroundOperators:
+Layout/SpaceAroundOperators:
   Enabled: false
 
 # Configuration parameters: ExactNameMatch, AllowPredicates, AllowDSLWriters, IgnoreClassMethods, Whitelist.
