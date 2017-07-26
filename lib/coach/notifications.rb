@@ -32,11 +32,11 @@ module Coach
         @benchmarks[event[:request].uuid] = RequestBenchmark.new(event[:middleware])
       end
 
-      @subscriptions << subscribe('middleware.finish') do |name, start, finish, _, event|
+      @subscriptions << subscribe('middleware.finish') do |_name, start, finish, _, event|
         log_middleware_finish(event, start, finish)
       end
 
-      @subscriptions << subscribe('handler.finish') do |name, start, finish, _, event|
+      @subscriptions << subscribe('handler.finish') do |_name, start, finish, _, event|
         log_handler_finish(event, start, finish)
       end
     end

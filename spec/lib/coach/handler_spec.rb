@@ -137,6 +137,38 @@ describe Coach::Handler do
       it { is_expected.to include('coach.request') }
       it { is_expected.to include('coach.middleware.finish') }
       it { is_expected.to include('coach.handler.finish') }
+
+      context "when an exception is raised in the chain" do
+        let(:explosive_action) { -> { raise "AH" } }
+        before { terminal_middleware.uses(middleware_a, callback: explosive_action) }
+
+        subject(:coach_events) do
+          events = []
+          subscription = ActiveSupport::Notifications.subscribe(/coach/) do |name, *args|
+            events << [name, args.last]
+          end
+
+          begin
+            handler.call({})
+          rescue
+            :continue_anyway
+          end
+          ActiveSupport::Notifications.unsubscribe(subscription)
+          events
+        end
+
+        it "should capture the error event with the metadata " do
+          is_expected.
+            to include(['coach.handler.finish', hash_including(
+              response: { status: 500 },
+              metadata: { A: true }
+            )])
+        end
+
+        it "should bubble the error to the next handler" do
+          expect { handler.call({}) }.to raise_error(StandardError, "AH")
+        end
+      end
     end
   end
 

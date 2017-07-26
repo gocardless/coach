@@ -2,6 +2,8 @@ require "coach/errors"
 
 module Coach
   class Handler
+    STATUS_CODE_FOR_EXCEPTIONS = 500
+
     def initialize(middleware, config = {})
       @root_item = MiddlewareItem.new(middleware, config)
       validate!
@@ -25,16 +27,17 @@ module Coach
       start = Time.now
 
       publish('coach.handler.start', start_event.dup)
-      response = chain.instrument.call
 
-      finish = Time.now
-      publish('coach.handler.finish',
-              start, finish, nil,
-              start_event.
-                merge(response: { status: response[0] },
-                      metadata: context.fetch(:_metadata, {})))
-
-      response
+      begin
+        response = chain.instrument.call
+      ensure
+        status = response.try(:first) || STATUS_CODE_FOR_EXCEPTIONS
+        publish('coach.handler.finish', start, Time.now, nil,
+                start_event.merge(
+                  response: { status: status },
+                  metadata: context.fetch(:_metadata, {})
+                ))
+      end
     end
 
     # Traverse the middlware tree to build a linear middleware sequence,
