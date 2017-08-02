@@ -292,3 +292,10 @@ solution to Rails `process_action.action_controller` event emitted on controller
 
 The benchmarking data includes information on how long each middleware took to process,
 along with the total duration of the chain.
+
+# License & Contributing
+
+* Coach is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+* Bug reports and pull requests are welcome on GitHub at https://github.com/gocardless/coach.
+
+GoCardless ♥ open source. If you do too, come [join us](https://gocardless.com/about/jobs).
