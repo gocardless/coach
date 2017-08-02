@@ -1,3 +1,10 @@
+# Unreleased changes
+
+# 0.4.6
+
+* [https://github.com/gocardless/coach/pull/22](#22) Publish ActiveSupport notifications
+  even on errors
+
 # 0.4.5 / 2017-04-26
 
 * [https://github.com/gocardless/coach/pull/17] Only require rspec/expectations

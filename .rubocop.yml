@@ -7,7 +7,7 @@ LineLength:
 # Avoid methods longer than 30 lines of code
 MethodLength:
   CountComments: false  # count full line comments?
-  Max: 15
+  Max: 16
 
 StringLiterals:
   Enabled: false
@@ -110,4 +110,5 @@ Style/TrivialAccessors:
   Enabled: false
 
 Metrics/BlockLength:
-  Max: 110
+  Exclude:
+    - "**/*_spec.rb"
