@@ -15,6 +15,7 @@ module Coach
 
     # Run validation on the root of the middleware chain
     delegate :validate!, to: :@root_item
+    delegate :publish, :instrument, to: ActiveSupport::Notifications
 
     # The Rack interface to handler - builds a middleware chain based on
     # the current request, and invokes it.
@@ -23,20 +24,25 @@ module Coach
       sequence = build_sequence(@root_item, context)
       chain = build_request_chain(sequence, context)
 
-      start_event = start_event(context)
-      start = Time.now
+      event = build_event(context)
 
-      publish('coach.handler.start', start_event.dup)
-
-      begin
-        response = chain.instrument.call
-      ensure
-        status = response.try(:first) || STATUS_CODE_FOR_EXCEPTIONS
-        publish('coach.handler.finish', start, Time.now, nil,
-                start_event.merge(
-                  response: { status: status },
-                  metadata: context.fetch(:_metadata, {})
-                ))
+      publish('coach.handler.start', event.dup)
+      instrument('coach.handler.finish', event) do
+        begin
+          response = chain.instrument.call
+        ensure
+          # We want to populate the response and metadata fields after the middleware
+          # chain has completed so that the end of the instrumentation can see them. The
+          # simplest way to do this is pass the event by reference to ActiveSupport, then
+          # modify the hash to contain this detail before the instrumentation completes.
+          #
+          # This way, the last coach.handler.finish event will have all the details.
+          status = response.try(:first) || STATUS_CODE_FOR_EXCEPTIONS
+          event.merge!(
+            response: { status: status },
+            metadata: context.fetch(:_metadata, {})
+          )
+        end
       end
     end
 
@@ -65,19 +71,14 @@ module Coach
 
     private
 
-    # Trigger ActiveSupport::Notification
-    def publish(name, *args)
-      ActiveSupport::Notifications.publish(name, *args)
-    end
-
     # Remove middleware that have been included multiple times with the same
     # config, leaving only the first instance
     def dedup_sequence(sequence)
       sequence.uniq { |item| [item.class, item.middleware, item.config] }
     end
 
-    # Event to send for start of handler
-    def start_event(context)
+    # Event to send with notifications
+    def build_event(context)
       {
         middleware: @root_item.middleware.name,
         request: context[:request]
