@@ -1,4 +1,11 @@
-# Unreleased changes
+# CHANGELOG
+
+# 0.5.0 / 2017-08-07
+
+* [https://github.com/gocardless/coach/pull/24](#24) Use
+  ActiveSupport.instrument for coach.handler.finish event. Potentially breaking
+  change as the coach.handler.finish subscribers may trigger twice, depending on
+  how users have subscribed to them.
 
 # 0.4.6
 
