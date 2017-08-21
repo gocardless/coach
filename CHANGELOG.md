@@ -1,5 +1,10 @@
 # CHANGELOG
 
+# 0.5.1 / 2017-08-21
+
+* [https://github.com/gocardless/coach/pull/26](#26) Add `started_at` to the
+  request event metadata.
+
 # 0.5.0 / 2017-08-07
 
 * [https://github.com/gocardless/coach/pull/24](#24) Use
