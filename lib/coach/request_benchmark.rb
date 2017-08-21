@@ -22,6 +22,7 @@ module Coach
     end
 
     def complete(start, finish)
+      @start = start
       @duration = finish - start
     end
 
@@ -29,6 +30,7 @@ module Coach
     def stats
       {
         endpoint_name: @endpoint_name,
+        started_at: @start,
         duration: format_ms(@duration),
         chain: sorted_chain.map do |event|
           { name: event[:name], duration: format_ms(event[:duration]) }
