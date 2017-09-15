@@ -1,5 +1,3 @@
-# coding: utf-8
-
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'coach/version'
@@ -23,5 +21,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.2'
   spec.add_development_dependency 'rspec-its', '~> 1.2'
   spec.add_development_dependency 'pry', '~> 0.10'
-  spec.add_development_dependency 'rubocop', '~> 0.49.1'
+  spec.add_development_dependency 'rubocop', '~> 0.50.0'
 end
