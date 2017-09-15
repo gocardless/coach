@@ -44,7 +44,7 @@ Metrics/CyclomaticComplexity:
 Metrics/PerceivedComplexity:
   Max: 10
 
-Style/AccessorMethodName:
+Naming/AccessorMethodName:
   Enabled: false
 
 # Allow non-ASCII characters (e.g. £) in comments
@@ -92,7 +92,7 @@ Layout/MultilineOperationIndentation:
   Enabled: false
 
 # Configuration parameters: NamePrefix, NamePrefixBlacklist.
-Style/PredicateName:
+Naming/PredicateName:
   Enabled: false
 
 Style/RedundantSelf:
@@ -112,3 +112,6 @@ Style/TrivialAccessors:
 Metrics/BlockLength:
   Exclude:
     - "**/*_spec.rb"
+
+Lint/RescueWithoutErrorClass:
+  Enabled: false
