@@ -181,6 +181,10 @@ Each middleware is encouraged to rely on data passed through the `provide`/`requ
 syntax exclusively, except in stateful operations (such as database queries). By sticking
 to this rule, testing becomes as simple as mocking a `context` hash.
 
+Before you can make use of the test helpers included in Coach, used in the examples
+below, you'll need to run `Coach.require_matchers!` - your `spec/spec_helper.rb` or
+`spec/rails_helper.rb` file is a good place to do this.
+
 ```ruby
 require 'spec_helper'
 
