@@ -1,8 +1,7 @@
 require 'rspec/its'
 require 'pry'
-require_relative '../lib/coach'
-
-Coach.require_matchers!
+require 'coach'
+require 'coach/rspec'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

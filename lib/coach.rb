@@ -14,6 +14,8 @@ require_relative 'coach/version'
 
 module Coach
   def self.require_matchers!
-    require_relative 'spec/matchers'
+    puts "Calling Coach.require_matchers! is deprecated, " \
+         "please use `require 'coach/rspec'` instead"
+    require_relative 'coach/rspec'
   end
 end
