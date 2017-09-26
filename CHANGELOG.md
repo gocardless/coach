@@ -1,43 +1,45 @@
 # CHANGELOG
 
+* [#29](https://github.com/gocardless/coach/pull/29) Replace Coach.require_matchers! with actual require
+
 # 0.5.1 / 2017-08-21
 
-* [https://github.com/gocardless/coach/pull/26](#26) Add `started_at` to the
+* [#26](https://github.com/gocardless/coach/pull/26) Add `started_at` to the
   request event metadata.
 
 # 0.5.0 / 2017-08-07
 
-* [https://github.com/gocardless/coach/pull/24](#24) Use
+* [#24](https://github.com/gocardless/coach/pull/24) Use
   ActiveSupport.instrument for coach.handler.finish event. Potentially breaking
   change as the coach.handler.finish subscribers may trigger twice, depending on
   how users have subscribed to them.
 
 # 0.4.6
 
-* [https://github.com/gocardless/coach/pull/22](#22) Publish ActiveSupport notifications
+* [#22](https://github.com/gocardless/coach/pull/22) Publish ActiveSupport notifications
   even on errors
 
 # 0.4.5 / 2017-04-26
 
-* [https://github.com/gocardless/coach/pull/17] Only require rspec/expectations
+* [#17](https://github.com/gocardless/coach/pull/17) Only require rspec/expectations
   when adding new matchers
-* [https://github.com/gocardless/coach/pull/18] Properly pin version of rubocop
+* [#18](https://github.com/gocardless/coach/pull/18) Properly pin version of rubocop
 
 # 0.4.4 / 2016-08-26
 
-* [https://github.com/gocardless/coach/pull/16] Fix middleware lookup issue in router
+* [#16](https://github.com/gocardless/coach/pull/16) Fix middleware lookup issue in router
 
 # 0.4.3 / 2016-05-07
 
-* [https://github.com/gocardless/coach/pull/15] Clean up `Coach::Handler#inspect`
+* [#15](https://github.com/gocardless/coach/pull/15) Clean up `Coach::Handler#inspect`
 
 # 0.4.2 / 2016-05-07
 
-* [https://github.com/gocardless/coach/pull/13] Add support for Rails 5.
+* [#13](https://github.com/gocardless/coach/pull/13) Add support for Rails 5.
 
 # 0.4.1 / 2016-03-09
 
-* [https://github.com/gocardless/coach/pull/10] Removed a dependency that Coach's RSpec matchers had on Rails' `.third` array method.
+* [#10](https://github.com/gocardless/coach/pull/10) Removed a dependency that Coach's RSpec matchers had on Rails' `.third` array method.
 
 # 0.4.0 / 2015-12-21
 
