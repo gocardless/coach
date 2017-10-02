@@ -4,9 +4,6 @@ inherit_gem:
 StringLiterals:
   Enabled: false
 
-Lint/UnusedBlockArgument:
-  Enabled: false
-
 Metrics/AbcSize:
   Max: 24
 

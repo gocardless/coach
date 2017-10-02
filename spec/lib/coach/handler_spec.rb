@@ -123,7 +123,7 @@ describe Coach::Handler do
 
       subject(:coach_events) do
         events = []
-        subscription = ActiveSupport::Notifications.subscribe(/coach/) do |name, *args|
+        subscription = ActiveSupport::Notifications.subscribe(/coach/) do |name, *_args|
           events << name
         end
 
