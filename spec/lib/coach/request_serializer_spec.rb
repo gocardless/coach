@@ -45,7 +45,7 @@ describe Coach::RequestSerializer do
                                                    filtered_parameters: nil,
                                                    filtered_env:        {
                                                      "foo" => "bar",
-                                                     "HTTP_foo" => "bar"
+                                                     "HTTP_foo" => "bar",
                                                    })
       end
 

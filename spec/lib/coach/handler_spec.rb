@@ -161,7 +161,7 @@ describe Coach::Handler do
           is_expected.
             to include(['coach.handler.finish', hash_including(
               response: { status: 500 },
-              metadata: { A: true }
+              metadata: { A: true },
             )])
         end
 

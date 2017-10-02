@@ -8,7 +8,7 @@ module Coach
       show:    { method: :get, url: ':id' },
       create:  { method: :post },
       update:  { method: :put, url: ':id' },
-      destroy: { method: :delete, url: ':id' }
+      destroy: { method: :delete, url: ':id' },
     }.each_value(&:freeze).freeze
 
     def initialize(mapper)

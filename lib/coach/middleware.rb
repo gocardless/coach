@@ -99,7 +99,7 @@ module Coach
     def middleware_event
       {
         middleware: self.class.name,
-        request: request
+        request: request,
       }
     end
   end

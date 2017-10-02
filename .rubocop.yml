@@ -1,116 +1,15 @@
-# For all options see https://github.com/bbatsov/rubocop/tree/master/config
-
 inherit_gem:
   ruboconfig: rubocop.yml
 
-# Limit lines to 90 characters.
-LineLength:
-  Max: 90
-
-# Avoid methods longer than 30 lines of code
-MethodLength:
-  CountComments: false  # count full line comments?
-  Max: 16
-
 StringLiterals:
-  Enabled: false
-
-# Wants underscores in all large numbers. Pain in the ass for things like
-# unix timestamps.
-NumericLiterals:
-  Enabled: false
-
-# Wants you to use the same argument names for every reduce. This seems kinda
-# naff compared to naming them semantically
-SingleLineBlockParams:
-  Enabled: false
-
-Style/SignalException:
-  EnforcedStyle: 'only_raise'
-
-Lint/NestedMethodDefinition:
   Enabled: false
 
 Lint/UnusedBlockArgument:
   Enabled: false
 
 Metrics/AbcSize:
-  Max: 61
-
-Metrics/CyclomaticComplexity:
-  Max: 10
-
-Metrics/PerceivedComplexity:
-  Max: 10
-
-Naming/AccessorMethodName:
-  Enabled: false
-
-# Allow non-ASCII characters (e.g. £) in comments
-Style/AsciiComments:
-  Enabled: false
-
-# Configuration parameters: EnforcedHashRocketStyle, EnforcedColonStyle, EnforcedLastArgumentHashStyle, SupportedLastArgumentHashStyles.
-Layout/AlignHash:
-  Enabled: false
-
-# Configuration parameters: EnforcedStyle, SupportedStyles, ProceduralMethods, FunctionalMethods, IgnoredMethods.
-Style/BlockDelimiters:
-  Enabled: false
-
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/ClassAndModuleChildren:
-  Enabled: false
-
-Layout/ClosingParenthesisIndentation:
-  Enabled: false
-
-# Configuration parameters: Keywords.
-Style/CommentAnnotation:
-  Enabled: false
-
-Style/Documentation:
-  Enabled: false
-
-Style/DoubleNegation:
-  Enabled: false
-
-# Configuration parameters: MinBodyLength.
-Style/GuardClause:
-  Enabled: false
-
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Layout/IndentHash:
-  Enabled: false
-
-Style/Lambda:
-  Enabled: false
-
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Layout/MultilineOperationIndentation:
-  Enabled: false
-
-# Configuration parameters: NamePrefix, NamePrefixBlacklist.
-Naming/PredicateName:
-  Enabled: false
-
-Style/RedundantSelf:
-  Enabled: false
-
-Layout/SpaceBeforeFirstArg:
-  Enabled: false
-
-# Configuration parameters: MultiSpaceAllowedForOperators.
-Layout/SpaceAroundOperators:
-  Enabled: false
-
-# Configuration parameters: ExactNameMatch, AllowPredicates, AllowDSLWriters, IgnoreClassMethods, Whitelist.
-Style/TrivialAccessors:
-  Enabled: false
-
-Metrics/BlockLength:
-  Exclude:
-    - "**/*_spec.rb"
+  Max: 24
 
 Lint/RescueWithoutErrorClass:
-  Enabled: false
+  Exclude:
+    - "*/**/*_spec.rb"

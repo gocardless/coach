@@ -82,8 +82,8 @@ module Coach
     # coach.request notification.
     def broadcast(event, benchmark)
       serialized = RequestSerializer.new(event[:request]).serialize.
-                   merge(benchmark.stats).
-                   merge(event.slice(:response, :metadata))
+        merge(benchmark.stats).
+        merge(event.slice(:response, :metadata))
       ActiveSupport::Notifications.publish('coach.request', serialized)
     end
   end
