@@ -1,5 +1,5 @@
-require 'spec_helper'
-require 'coach/notifications'
+require "spec_helper"
+require "coach/notifications"
 
 describe Coach::Notifications do
   subject(:notifications) { described_class.instance }
@@ -14,7 +14,7 @@ describe Coach::Notifications do
   # Capture all Coach events
   let(:events) { [] }
   let(:middleware_event) do
-    event = events.find { |(name, _)| name == 'coach.request' }
+    event = events.find { |(name, _)| name == "coach.request" }
     event && event[1]
   end
   before do
@@ -25,12 +25,12 @@ describe Coach::Notifications do
 
   # Mock a handler to simulate an endpoint call
   let(:handler) do
-    middleware_a = build_middleware('A')
-    middleware_b = build_middleware('B')
+    middleware_a = build_middleware("A")
+    middleware_b = build_middleware("B")
 
     middleware_a.uses(middleware_b)
 
-    terminal_middleware = build_middleware('Terminal')
+    terminal_middleware = build_middleware("Terminal")
     terminal_middleware.uses(middleware_a)
 
     Coach::Handler.new(terminal_middleware)
@@ -53,7 +53,7 @@ describe Coach::Notifications do
 
       it "contains all middleware that have been run" do
         middleware_names = middleware_event[:chain].map { |item| item[:name] }
-        expect(middleware_names).to include('Terminal', 'A', 'B')
+        expect(middleware_names).to include("Terminal", "A", "B")
       end
 
       it "includes all logged metadata" do
@@ -68,13 +68,13 @@ describe Coach::Notifications do
       notifications.subscribe!
 
       handler.call({})
-      expect(events.count { |(name, _)| name == 'coach.request' }).
+      expect(events.count { |(name, _)| name == "coach.request" }).
         to eq(1)
 
       notifications.unsubscribe!
 
       handler.call({})
-      expect(events.count { |(name, _)| name == 'coach.request' }).
+      expect(events.count { |(name, _)| name == "coach.request" }).
         to eq(1)
     end
   end

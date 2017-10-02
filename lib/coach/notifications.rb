@@ -1,5 +1,5 @@
-require_relative 'request_benchmark'
-require_relative 'request_serializer'
+require_relative "request_benchmark"
+require_relative "request_serializer"
 
 module Coach
   # By default, Coach will trigger ActiveSupport::Notifications at specific times in a
@@ -28,15 +28,15 @@ module Coach
     def subscribe!
       return if active?
 
-      @subscriptions << subscribe('handler.start') do |_, event|
+      @subscriptions << subscribe("handler.start") do |_, event|
         @benchmarks[event[:request].uuid] = RequestBenchmark.new(event[:middleware])
       end
 
-      @subscriptions << subscribe('middleware.finish') do |_name, start, finish, _, event|
+      @subscriptions << subscribe("middleware.finish") do |_name, start, finish, _, event|
         log_middleware_finish(event, start, finish)
       end
 
-      @subscriptions << subscribe('handler.finish') do |_name, start, finish, _, event|
+      @subscriptions << subscribe("handler.finish") do |_name, start, finish, _, event|
         log_handler_finish(event, start, finish)
       end
     end
@@ -84,7 +84,7 @@ module Coach
       serialized = RequestSerializer.new(event[:request]).serialize.
         merge(benchmark.stats).
         merge(event.slice(:response, :metadata))
-      ActiveSupport::Notifications.publish('coach.request', serialized)
+      ActiveSupport::Notifications.publish("coach.request", serialized)
     end
   end
 end

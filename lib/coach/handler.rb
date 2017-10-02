@@ -27,8 +27,8 @@ module Coach
 
       event = build_event(context)
 
-      publish('coach.handler.start', event.dup)
-      instrument('coach.handler.finish', event) do
+      publish("coach.handler.start", event.dup)
+      instrument("coach.handler.finish", event) do
         begin
           response = chain.instrument.call
         ensure

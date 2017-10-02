@@ -4,12 +4,12 @@ require "coach/middleware_validator"
 describe Coach::MiddlewareValidator do
   subject(:validator) { described_class.new(head_middleware, already_provided) }
 
-  let(:head_middleware) { build_middleware('Head') }
+  let(:head_middleware) { build_middleware("Head") }
   let(:already_provided) { [] }
 
-  let(:middleware_a) { build_middleware('A') }
-  let(:middleware_b) { build_middleware('B') }
-  let(:middleware_c) { build_middleware('C') }
+  let(:middleware_a) { build_middleware("A") }
+  let(:middleware_b) { build_middleware("B") }
+  let(:middleware_c) { build_middleware("C") }
 
   # head <── a
   #       └─ b <- c

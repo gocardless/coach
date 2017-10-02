@@ -1,9 +1,6 @@
 inherit_gem:
   ruboconfig: rubocop.yml
 
-StringLiterals:
-  Enabled: false
-
 Metrics/AbcSize:
   Max: 24
 

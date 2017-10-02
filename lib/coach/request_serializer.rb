@@ -8,7 +8,7 @@ module Coach
     # that will determine how to transform the original header value, otherwise a default
     # string is used.
     def self.sanitize_header(header, &rule)
-      header_rules[header] = rule || ->(_value) { '[FILTERED]' }
+      header_rules[header] = rule || ->(_value) { "[FILTERED]" }
     end
 
     # Applies sanitizing rules. Expects `header` to be in 'http_header_name' form.
