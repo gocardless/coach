@@ -1,5 +1,8 @@
 # For all options see https://github.com/bbatsov/rubocop/tree/master/config
 
+inherit_gem:
+  ruboconfig: rubocop.yml
+
 # Limit lines to 90 characters.
 LineLength:
   Max: 90
@@ -24,10 +27,6 @@ SingleLineBlockParams:
 
 Style/SignalException:
   EnforcedStyle: 'only_raise'
-
-# Use trailing rather than leading dots on multi-line call chains
-Layout/DotPosition:
-  EnforcedStyle: trailing
 
 Lint/NestedMethodDefinition:
   Enabled: false
