@@ -1,9 +1,6 @@
 inherit_gem:
   ruboconfig: rubocop.yml
 
-Metrics/AbcSize:
-  Max: 24
-
 Lint/RescueWithoutErrorClass:
   Exclude:
     - "*/**/*_spec.rb"
