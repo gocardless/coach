@@ -19,6 +19,7 @@ module Coach
 
     # The Rack interface to handler - builds a middleware chain based on
     # the current request, and invokes it.
+    # rubocop:disable Metrics/MethodLength
     def call(env)
       context = { request: ActionDispatch::Request.new(env) }
       sequence = build_sequence(@root_item, context)
@@ -26,8 +27,8 @@ module Coach
 
       event = build_event(context)
 
-      publish('coach.handler.start', event.dup)
-      instrument('coach.handler.finish', event) do
+      publish("coach.handler.start", event.dup)
+      instrument("coach.handler.finish", event) do
         begin
           response = chain.instrument.call
         ensure
@@ -40,11 +41,12 @@ module Coach
           status = response.try(:first) || STATUS_CODE_FOR_EXCEPTIONS
           event.merge!(
             response: { status: status },
-            metadata: context.fetch(:_metadata, {})
+            metadata: context.fetch(:_metadata, {}),
           )
         end
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     # Traverse the middlware tree to build a linear middleware sequence,
     # containing only middlewares that apply to this request.
@@ -81,7 +83,7 @@ module Coach
     def build_event(context)
       {
         middleware: @root_item.middleware.name,
-        request: context[:request]
+        request: context[:request],
       }
     end
   end

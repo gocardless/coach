@@ -5,10 +5,10 @@ module Coach
   class Router
     ACTION_TRAITS = {
       index:   { method: :get },
-      show:    { method: :get, url: ':id' },
+      show:    { method: :get, url: ":id" },
       create:  { method: :post },
-      update:  { method: :put, url: ':id' },
-      destroy: { method: :delete, url: ':id' }
+      update:  { method: :put, url: ":id" },
+      destroy: { method: :delete, url: ":id" },
     }.each_value(&:freeze).freeze
 
     def initialize(mapper)
@@ -60,7 +60,7 @@ module Coach
 
     # Applies trait url to base, removing duplicate /'s
     def action_url(base, traits)
-      [base, traits[:url]].compact.join('/').gsub(%r{/+}, '/')
+      [base, traits[:url]].compact.join("/").gsub(%r{/+}, "/")
     end
 
     # Turns a snake_case string/symbol into a CamelCase

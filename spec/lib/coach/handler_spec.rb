@@ -16,8 +16,8 @@ describe Coach::Handler do
   before { Coach::Notifications.unsubscribe! }
 
   describe "#call" do
-    let(:a_spy) { spy('middleware a') }
-    let(:b_spy) { spy('middleware b') }
+    let(:a_spy) { spy("middleware a") }
+    let(:b_spy) { spy("middleware b") }
 
     before { terminal_middleware.uses(middleware_a, callback: a_spy) }
     before { terminal_middleware.uses(middleware_b, callback: b_spy) }
@@ -111,7 +111,7 @@ describe Coach::Handler do
   describe "#call" do
     before { terminal_middleware.uses(middleware_a) }
 
-    describe 'notifications' do
+    describe "notifications" do
       before { Coach::Notifications.subscribe! }
 
       # Prevent RequestSerializer from erroring due to insufficient request mock
@@ -123,7 +123,7 @@ describe Coach::Handler do
 
       subject(:coach_events) do
         events = []
-        subscription = ActiveSupport::Notifications.subscribe(/coach/) do |name, *args|
+        subscription = ActiveSupport::Notifications.subscribe(/coach/) do |name, *_args|
           events << name
         end
 
@@ -132,11 +132,11 @@ describe Coach::Handler do
         events
       end
 
-      it { is_expected.to include('coach.handler.start') }
-      it { is_expected.to include('coach.middleware.start') }
-      it { is_expected.to include('coach.request') }
-      it { is_expected.to include('coach.middleware.finish') }
-      it { is_expected.to include('coach.handler.finish') }
+      it { is_expected.to include("coach.handler.start") }
+      it { is_expected.to include("coach.middleware.start") }
+      it { is_expected.to include("coach.request") }
+      it { is_expected.to include("coach.middleware.finish") }
+      it { is_expected.to include("coach.handler.finish") }
 
       context "when an exception is raised in the chain" do
         let(:explosive_action) { -> { raise "AH" } }
@@ -159,9 +159,9 @@ describe Coach::Handler do
 
         it "should capture the error event with the metadata " do
           is_expected.
-            to include(['coach.handler.finish', hash_including(
+            to include(["coach.handler.finish", hash_including(
               response: { status: 500 },
-              metadata: { A: true }
+              metadata: { A: true },
             )])
         end
 
@@ -173,6 +173,6 @@ describe Coach::Handler do
   end
 
   describe "#inspect" do
-    its(:inspect) { is_expected.to eql('#<Coach::Handler[Terminal]>') }
+    its(:inspect) { is_expected.to eql("#<Coach::Handler[Terminal]>") }
   end
 end

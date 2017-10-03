@@ -8,7 +8,7 @@ module Coach
     # that will determine how to transform the original header value, otherwise a default
     # string is used.
     def self.sanitize_header(header, &rule)
-      header_rules[header] = rule || ->(value) { '[FILTERED]' }
+      header_rules[header] = rule || ->(_value) { "[FILTERED]" }
     end
 
     # Applies sanitizing rules. Expects `header` to be in 'http_header_name' form.
@@ -39,17 +39,19 @@ module Coach
 
         # Extra request info
         headers: filtered_headers,
-        session_id: @request.remote_ip
+        session_id: @request.remote_ip,
       }
     end
 
     private
 
+    # rubocop:disable Lint/RescueWithoutErrorClass
     def request_path
       @request.fullpath
     rescue
       "unknown"
     end
+    # rubocop:enable Lint/RescueWithoutErrorClass
 
     def filtered_headers
       header_value_pairs = @request.filtered_env.map do |key, value|

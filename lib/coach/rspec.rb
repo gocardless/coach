@@ -1,8 +1,10 @@
-require 'rspec/expectations'
-require 'coach/middleware'
+require "rspec/expectations"
+require "coach/middleware"
 
 # Middleware stubbing ######################################
 
+# rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/AbcSize
 def build_middleware(name)
   Class.new(Coach::Middleware) do
     # To access `name`, we need to use `define_method` instead of `def`
@@ -25,6 +27,8 @@ def build_middleware(name)
     end
   end
 end
+# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/MethodLength
 
 def null_middleware
   double(call: nil)
@@ -39,7 +43,7 @@ RSpec::Matchers.define :respond_with_status do |expected_status|
     @response[0] == expected_status
   end
 
-  failure_message do |actual|
+  failure_message do |_actual|
     "expected #{@middleware.class.name} to respond with #{expected_status} but got " \
     "#{@response[0]}"
   end
@@ -51,7 +55,7 @@ RSpec::Matchers.define :respond_with_body_that_matches do |body_regex|
     @response_body.match(body_regex)
   end
 
-  failure_message do |actual|
+  failure_message do |_actual|
     "expected that \"#{@response_body}\" would match #{body_regex}"
   end
 end
@@ -65,7 +69,7 @@ RSpec::Matchers.define :respond_with_envelope do |envelope, keys = []|
     expect(@envelope).to match(hash_including(*keys))
   end
 
-  failure_message do |actual|
+  failure_message do |_actual|
     "expected that \"#{@response}\" would have envelope \"#{envelope}\" that matches " \
     "hash_including(#{keys})"
   end
@@ -78,7 +82,7 @@ RSpec::Matchers.define :respond_with_header do |header, value_regex|
     @header_value.match(value_regex)
   end
 
-  failure_message do |actual|
+  failure_message do |_actual|
     "expected #{header} header in response to match #{value_regex} but found " \
     "\"#{@header_value}\""
   end

@@ -1,7 +1,7 @@
-require 'rspec/its'
-require 'pry'
-require 'coach'
-require 'coach/rspec'
+require "rspec/its"
+require "pry"
+require "coach"
+require "coach/rspec"
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

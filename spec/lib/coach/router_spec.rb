@@ -1,7 +1,7 @@
-require 'spec_helper'
+require "spec_helper"
 
-require 'coach/router'
-require 'coach/handler'
+require "coach/router"
+require "coach/handler"
 
 describe Coach::Router do
   subject(:router) { described_class.new(mapper) }
@@ -35,31 +35,31 @@ describe Coach::Router do
   end
 
   describe "#draw" do
-    subject(:draw) { router.draw(resource_routes, base: '/resource', actions: actions) }
+    subject(:draw) { router.draw(resource_routes, base: "/resource", actions: actions) }
 
     context "with default action" do
-      it_behaves_like "mount action", :index, url: '/resource', method: :get
-      it_behaves_like "mount action", :show, url: '/resource/:id', method: :get
-      it_behaves_like "mount action", :create, url: '/resource', method: :post
-      it_behaves_like "mount action", :update, url: '/resource/:id', method: :put
-      it_behaves_like "mount action", :destroy, url: '/resource/:id', method: :delete
+      it_behaves_like "mount action", :index, url: "/resource", method: :get
+      it_behaves_like "mount action", :show, url: "/resource/:id", method: :get
+      it_behaves_like "mount action", :create, url: "/resource", method: :post
+      it_behaves_like "mount action", :update, url: "/resource/:id", method: :put
+      it_behaves_like "mount action", :destroy, url: "/resource/:id", method: :delete
     end
 
     context "with custom action" do
       let(:actions) { [refund: { method: :post, url: custom_url }] }
 
       context "with no slash" do
-        let(:custom_url) { ':id/refund' }
+        let(:custom_url) { ":id/refund" }
         it "mounts correct url" do
-          expect(mapper).to receive(:match).with('/resource/:id/refund', anything)
+          expect(mapper).to receive(:match).with("/resource/:id/refund", anything)
           draw
         end
       end
 
       context "with multiple /'s" do
-        let(:custom_url) { '//:id/refund' }
+        let(:custom_url) { "//:id/refund" }
         it "mounts correct url" do
-          expect(mapper).to receive(:match).with('/resource/:id/refund', anything)
+          expect(mapper).to receive(:match).with("/resource/:id/refund", anything)
           draw
         end
       end

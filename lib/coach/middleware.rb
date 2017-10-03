@@ -16,7 +16,7 @@ module Coach
 
     def self.provides(*new_provided)
       if new_provided.include?(:_metadata)
-        raise 'Cannot provide :_metadata, Coach uses this internally!'
+        raise "Cannot provide :_metadata, Coach uses this internally!"
       end
 
       provided.concat(new_provided)
@@ -74,9 +74,9 @@ module Coach
     def instrument
       proc do
         ActiveSupport::Notifications.
-          publish('coach.middleware.start', middleware_event)
+          publish("coach.middleware.start", middleware_event)
         ActiveSupport::Notifications.
-          instrument('coach.middleware.finish', middleware_event) { call }
+          instrument("coach.middleware.finish", middleware_event) { call }
       end
     end
 
@@ -99,7 +99,7 @@ module Coach
     def middleware_event
       {
         middleware: self.class.name,
-        request: request
+        request: request,
       }
     end
   end

@@ -24,11 +24,13 @@ module Coach
     end
 
     # Assigns the parent for this middleware, allowing config inheritance
+    # rubocop:disable Naming/AccessorMethodName
     def set_parent(parent)
       @parent = parent
 
       self
     end
+    # rubocop:enable Naming/AccessorMethodName
 
     # Generates config by either cloning our given config (if it's a hash) else if a
     # lambda value, then will compute the config by calling the lambda with this
