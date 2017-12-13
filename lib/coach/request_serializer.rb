@@ -45,10 +45,9 @@ module Coach
 
     private
 
-    # rubocop:disable Lint/RescueWithoutErrorClass
     def request_path
       @request.fullpath
-    rescue
+    rescue StandardError
       "unknown"
     end
     # rubocop:enable Lint/RescueWithoutErrorClass

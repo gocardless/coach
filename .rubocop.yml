@@ -1,6 +1,6 @@
 inherit_gem:
   ruboconfig: rubocop.yml
 
-Lint/RescueWithoutErrorClass:
+Style/RescueStandardError:
   Exclude:
     - "*/**/*_spec.rb"

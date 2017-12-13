@@ -45,9 +45,7 @@ module Coach
     # ...which will load the default route for `show` and `index`, while also configuring
     # a refund route.
     def action_traits(list_of_actions)
-      if list_of_actions.last.is_a?(Hash)
-        *list_of_actions, traits = list_of_actions
-      end
+      *list_of_actions, traits = list_of_actions if list_of_actions.last.is_a?(Hash)
 
       list_of_actions.reduce(traits || {}) do |memo, action|
         trait = ACTION_TRAITS.fetch(action) do
