@@ -297,6 +297,20 @@ solution to Rails `process_action.action_controller` event emitted on controller
 The benchmarking data includes information on how long each middleware took to process,
 along with the total duration of the chain.
 
+You can add additional metadata to the notifications published by Coach by calling the
+`log_metadata` method from inside your Coach middlewares.
+
+```
+class Tracking < Coach::Middleware
+  requires :user
+
+  def call
+    log_metadata(user_id: user.id)
+    next_middleware.call
+  end
+end
+```
+
 # License & Contributing
 
 * Coach is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
