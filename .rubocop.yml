@@ -1,5 +1,5 @@
 inherit_gem:
-  ruboconfig: rubocop.yml
+  gc_ruboconfig: rubocop.yml
 
 Style/RescueStandardError:
   Exclude:

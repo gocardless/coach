@@ -2,5 +2,5 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem "gc_ruboconfig", "~> 2.0.0"
 gem "rails", "~> #{ENV['RAILS_VERSION']}" if ENV["RAILS_VERSION"]
-gem "ruboconfig", git: "https://github.com/gocardless/ruboconfig", tag: "v1.0.1"
