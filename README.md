@@ -21,6 +21,8 @@ To get started, just add Coach to your `Gemfile`, and then run `bundle`:
 gem 'coach', '~> 0.5.2'
 ```
 
+Coach works with Ruby versions 2.2 and onwards.
+
 ## Coach by example
 
 The best way to see the benefits of Coach is with a demonstration.

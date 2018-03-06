@@ -6,16 +6,10 @@ rvm:
   - 2.4.1
   - 2.3.4
   - 2.2.4
-  - 2.1
 
 env:
   - "RAILS_VERSION=4.2.6"
   - "RAILS_VERSION=5.0.2"
-
-matrix:
-  exclude:
-    - rvm: 2.1
-      env: "RAILS_VERSION=5.0.2"
 
 script:
   - bundle exec rubocop

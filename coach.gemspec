@@ -10,6 +10,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/gocardless/coach"
   spec.email         = %w[developers@gocardless.com]
   spec.license       = "MIT"
+  spec.required_ruby_version = ">= 2.2"
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.test_files    = spec.files.grep(%r{^spec/})

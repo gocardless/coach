@@ -1,6 +1,9 @@
 inherit_gem:
   gc_ruboconfig: rubocop.yml
 
+AllCops:
+  TargetRubyVersion: 2.2
+
 Style/RescueStandardError:
   Exclude:
     - "*/**/*_spec.rb"
