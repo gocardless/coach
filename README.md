@@ -13,6 +13,16 @@ Coach improves your controller code by encouraging:
 - **Testability** - Test each middleware in isolation, with effortless mocking of test
   data and natural RSpec matchers.
 
+# Installation
+
+To get started, just add Coach to your `Gemfile`, and then run `bundle`:
+
+```ruby
+gem 'coach', '~> 0.5.2'
+```
+
+Coach works with Ruby versions 2.2 and onwards.
+
 ## Coach by example
 
 The best way to see the benefits of Coach is with a demonstration.
