@@ -6,7 +6,7 @@ require "coach/handler"
 describe Coach::Router do
   subject(:router) { described_class.new(mapper) }
 
-  let(:mapper) { double(:mapper) }
+  let(:mapper) { instance_double("ActionDispatch::Routing::Mapper") }
 
   before do
     allow(Coach::Handler).to receive(:new) { |route| route }

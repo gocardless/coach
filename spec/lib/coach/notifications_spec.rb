@@ -9,7 +9,8 @@ describe Coach::Notifications do
   # Remove need to fully mock a request object
   before do
     allow(Coach::RequestSerializer).
-      to receive(:new).and_return(double(serialize: {}))
+      to receive(:new).
+      and_return(instance_double("Coach::RequestSerializer", serialize: {}))
   end
 
   # Capture all Coach events

@@ -17,16 +17,16 @@ describe Coach::Handler do
   before { Coach::Notifications.unsubscribe! }
 
   describe "#call" do
-    let(:a_spy) { spy("middleware a") }
-    let(:b_spy) { spy("middleware b") }
+    let(:a_double) { double }
+    let(:b_double) { double }
 
-    before { terminal_middleware.uses(middleware_a, callback: a_spy) }
-    before { terminal_middleware.uses(middleware_b, callback: b_spy) }
+    before { terminal_middleware.uses(middleware_a, callback: a_double) }
+    before { terminal_middleware.uses(middleware_b, callback: b_double) }
 
     it "invokes all middleware in the chain" do
+      expect(a_double).to receive(:call)
+      expect(b_double).to receive(:call)
       result = handler.call({})
-      expect(a_spy).to have_received(:call)
-      expect(b_spy).to have_received(:call)
       expect(result).to eq(%w[A{} B{} Terminal{:handler=>true}])
     end
   end
@@ -119,7 +119,7 @@ describe Coach::Handler do
       before do
         allow(Coach::RequestSerializer).
           to receive(:new).
-          and_return(double(serialize: {}))
+          and_return(instance_double("Coach::RequestSerializer", serialize: {}))
       end
 
       subject(:coach_events) do
