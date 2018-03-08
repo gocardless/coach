@@ -8,16 +8,16 @@ describe Coach::Router do
 
   let(:mapper) { instance_double("ActionDispatch::Routing::Mapper") }
 
-  before do
-    allow(Coach::Handler).to receive(:new) { |route| route }
-  end
-
   let(:resource_routes) do
     routes_module = Module.new
     %i[Index Show Create Update Destroy Refund].each do |class_name|
       routes_module.const_set(class_name, Class.new)
     end
     routes_module
+  end
+
+  before do
+    allow(Coach::Handler).to receive(:new) { |route| route }
   end
 
   shared_examples "mount action" do |action, params|
