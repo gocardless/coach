@@ -14,8 +14,8 @@ describe Coach::RequestSerializer do
 
       context "does not specify block" do
         it "replaces blacklisted header with default text" do
-          sanitized = Coach::RequestSerializer.apply_header_rule(header, "value")
-          expect(sanitized).not_to eq("value")
+          sanitized = described_class.apply_header_rule(header, "value")
+          expect(sanitized).to_not eq("value")
         end
       end
 
@@ -23,7 +23,7 @@ describe Coach::RequestSerializer do
         let(:rule) { ->(value) { "#{value}#{value}" } }
 
         it "uses block to compute new filtered value" do
-          sanitized = Coach::RequestSerializer.apply_header_rule(header, "value")
+          sanitized = described_class.apply_header_rule(header, "value")
           expect(sanitized).to eq("valuevalue")
         end
       end
@@ -31,12 +31,14 @@ describe Coach::RequestSerializer do
 
     context "with header that has no blacklist rule" do
       it "does not modify value" do
-        sanitized = Coach::RequestSerializer.apply_header_rule(header, "value")
+        sanitized = described_class.apply_header_rule(header, "value")
         expect(sanitized).to eq("value")
       end
     end
 
     context "as an instance" do
+      subject(:request_serializer) { described_class.new(mock_request) }
+
       let(:mock_request) do
         instance_double("ActionDispatch::Request", format:              nil,
                                                    remote_ip:           nil,
@@ -48,8 +50,6 @@ describe Coach::RequestSerializer do
                                                      "HTTP_foo" => "bar",
                                                    })
       end
-
-      subject(:request_serializer) { described_class.new(mock_request) }
 
       describe "#serialize" do
         subject(:serialized) { request_serializer.serialize }
@@ -63,7 +63,7 @@ describe Coach::RequestSerializer do
         it "filters headers allowing only those prefixed with 'HTTP_'" do
           allow(mock_request).to receive(:fullpath).and_return(nil)
 
-          expect(serialized[:headers]).not_to include("foo")
+          expect(serialized[:headers]).to_not include("foo")
           expect(serialized[:headers]).to include("http_foo")
         end
       end

@@ -5,13 +5,14 @@ require "coach/middleware"
 require "coach/errors"
 
 describe Coach::Handler do
+  subject(:handler) { described_class.new(terminal_middleware, handler: true) }
+
   let(:middleware_a) { build_middleware("A") }
   let(:middleware_b) { build_middleware("B") }
   let(:middleware_c) { build_middleware("C") }
   let(:middleware_d) { build_middleware("D") }
 
   let(:terminal_middleware) { build_middleware("Terminal") }
-  subject(:handler) { Coach::Handler.new(terminal_middleware, handler: true) }
 
   before { Coach::Notifications.unsubscribe! }
 
@@ -139,9 +140,6 @@ describe Coach::Handler do
       it { is_expected.to include("coach.handler.finish") }
 
       context "when an exception is raised in the chain" do
-        let(:explosive_action) { -> { raise "AH" } }
-        before { terminal_middleware.uses(middleware_a, callback: explosive_action) }
-
         subject(:coach_events) do
           events = []
           subscription = ActiveSupport::Notifications.subscribe(/coach/) do |name, *args|
@@ -157,7 +155,11 @@ describe Coach::Handler do
           events
         end
 
-        it "should capture the error event with the metadata " do
+        let(:explosive_action) { -> { raise "AH" } }
+
+        before { terminal_middleware.uses(middleware_a, callback: explosive_action) }
+
+        it "captures the error event with the metadata" do
           is_expected.
             to include(["coach.handler.finish", hash_including(
               response: { status: 500 },
@@ -165,7 +167,7 @@ describe Coach::Handler do
             )])
         end
 
-        it "should bubble the error to the next handler" do
+        it "bubbles the error to the next handler" do
           expect { handler.call({}) }.to raise_error(StandardError, "AH")
         end
       end

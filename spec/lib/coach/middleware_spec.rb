@@ -1,7 +1,7 @@
 require "coach/middleware"
 
 describe Coach::Middleware do
-  let(:middleware_class) { Class.new(Coach::Middleware) }
+  let(:middleware_class) { Class.new(described_class) }
   let(:context_) { {} }
   let(:middleware_obj) { middleware_class.new(context_, nil) }
 
@@ -17,8 +17,8 @@ describe Coach::Middleware do
       before { middleware_class.provides(:foo, :bar) }
 
       it "returns true" do
-        expect(middleware_class.provides?(:foo)).to be_truthy
-        expect(middleware_class.provides?(:bar)).to be_truthy
+        expect(middleware_class).to be_provides(:foo)
+        expect(middleware_class).to be_provides(:bar)
       end
     end
 
@@ -26,7 +26,7 @@ describe Coach::Middleware do
       before { middleware_class.provides(:foo) }
 
       it "returns false" do
-        expect(middleware_class.provides?(:baz)).to be_falsy
+        expect(middleware_class).to_not be_provides(:baz)
       end
     end
   end

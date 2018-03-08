@@ -3,6 +3,7 @@ require "coach/notifications"
 
 describe Coach::Notifications do
   subject(:notifications) { described_class.instance }
+
   before { described_class.unsubscribe! }
 
   # Remove need to fully mock a request object
@@ -45,7 +46,7 @@ describe Coach::Notifications do
 
     it "will now send coach.request" do
       handler.call({})
-      expect(middleware_event).not_to be_nil
+      expect(middleware_event).to_not be_nil
     end
 
     describe "coach.request event" do
@@ -64,7 +65,7 @@ describe Coach::Notifications do
   end
 
   describe "#unsubscribe!" do
-    it "should disable any prior subscriptions" do
+    it "disables any prior subscriptions" do
       notifications.subscribe!
 
       handler.call({})

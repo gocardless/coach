@@ -5,6 +5,7 @@ require "coach/handler"
 
 describe Coach::Router do
   subject(:router) { described_class.new(mapper) }
+
   let(:mapper) { double(:mapper) }
 
   before do
@@ -50,6 +51,7 @@ describe Coach::Router do
 
       context "with no slash" do
         let(:custom_url) { ":id/refund" }
+
         it "mounts correct url" do
           expect(mapper).to receive(:match).with("/resource/:id/refund", anything)
           draw
@@ -58,6 +60,7 @@ describe Coach::Router do
 
       context "with multiple /'s" do
         let(:custom_url) { "//:id/refund" }
+
         it "mounts correct url" do
           expect(mapper).to receive(:match).with("/resource/:id/refund", anything)
           draw
@@ -67,6 +70,7 @@ describe Coach::Router do
 
     context "with unknown default action" do
       let(:actions) { [:unknown] }
+
       it "raises RouterUnknownDefaultAction" do
         expect { draw }.to raise_error(Coach::Errors::RouterUnknownDefaultAction)
       end
