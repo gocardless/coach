@@ -50,7 +50,6 @@ module Coach
     rescue StandardError
       "unknown"
     end
-    # rubocop:enable Lint/RescueWithoutErrorClass
 
     def filtered_headers
       header_value_pairs = @request.filtered_env.map do |key, value|

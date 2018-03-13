@@ -3,12 +3,18 @@ require "coach/notifications"
 
 describe Coach::Notifications do
   subject(:notifications) { described_class.instance }
-  before { described_class.unsubscribe! }
 
-  # Remove need to fully mock a request object
   before do
+    described_class.unsubscribe!
+
+    # Remove need to fully mock a request object
     allow(Coach::RequestSerializer).
-      to receive(:new).and_return(double(serialize: {}))
+      to receive(:new).
+      and_return(instance_double("Coach::RequestSerializer", serialize: {}))
+
+    ActiveSupport::Notifications.subscribe(/coach/) do |name, *_, event|
+      events << [name, event]
+    end
   end
 
   # Capture all Coach events
@@ -16,11 +22,6 @@ describe Coach::Notifications do
   let(:middleware_event) do
     event = events.find { |(name, _)| name == "coach.request" }
     event && event[1]
-  end
-  before do
-    ActiveSupport::Notifications.subscribe(/coach/) do |name, *_, event|
-      events << [name, event]
-    end
   end
 
   # Mock a handler to simulate an endpoint call
@@ -45,7 +46,7 @@ describe Coach::Notifications do
 
     it "will now send coach.request" do
       handler.call({})
-      expect(middleware_event).not_to be_nil
+      expect(middleware_event).to_not be_nil
     end
 
     describe "coach.request event" do
@@ -64,7 +65,7 @@ describe Coach::Notifications do
   end
 
   describe "#unsubscribe!" do
-    it "should disable any prior subscriptions" do
+    it "disables any prior subscriptions" do
       notifications.subscribe!
 
       handler.call({})

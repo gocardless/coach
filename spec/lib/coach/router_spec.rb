@@ -5,11 +5,8 @@ require "coach/handler"
 
 describe Coach::Router do
   subject(:router) { described_class.new(mapper) }
-  let(:mapper) { double(:mapper) }
 
-  before do
-    allow(Coach::Handler).to receive(:new) { |route| route }
-  end
+  let(:mapper) { instance_double("ActionDispatch::Routing::Mapper") }
 
   let(:resource_routes) do
     routes_module = Module.new
@@ -17,6 +14,10 @@ describe Coach::Router do
       routes_module.const_set(class_name, Class.new)
     end
     routes_module
+  end
+
+  before do
+    allow(Coach::Handler).to receive(:new) { |route| route }
   end
 
   shared_examples "mount action" do |action, params|
@@ -50,6 +51,7 @@ describe Coach::Router do
 
       context "with no slash" do
         let(:custom_url) { ":id/refund" }
+
         it "mounts correct url" do
           expect(mapper).to receive(:match).with("/resource/:id/refund", anything)
           draw
@@ -58,6 +60,7 @@ describe Coach::Router do
 
       context "with multiple /'s" do
         let(:custom_url) { "//:id/refund" }
+
         it "mounts correct url" do
           expect(mapper).to receive(:match).with("/resource/:id/refund", anything)
           draw
@@ -67,6 +70,7 @@ describe Coach::Router do
 
     context "with unknown default action" do
       let(:actions) { [:unknown] }
+
       it "raises RouterUnknownDefaultAction" do
         expect { draw }.to raise_error(Coach::Errors::RouterUnknownDefaultAction)
       end

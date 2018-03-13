@@ -1,3 +1,5 @@
+inherit_from: .rubocop_todo.yml
+
 inherit_gem:
   gc_ruboconfig: rubocop.yml
 
@@ -7,3 +9,12 @@ AllCops:
 Style/RescueStandardError:
   Exclude:
     - "*/**/*_spec.rb"
+
+Naming/UncommunicativeMethodParamName:
+  AllowedNames:
+    # These are the default allowed names, set by Rubocop
+    - io
+    - id
+    # These are some custom names that we want to allow, since they aren't
+    # uncommunicative - they're actually rather meaningful!
+    - as

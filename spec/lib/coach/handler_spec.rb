@@ -5,27 +5,30 @@ require "coach/middleware"
 require "coach/errors"
 
 describe Coach::Handler do
+  subject(:handler) { described_class.new(terminal_middleware, handler: true) }
+
   let(:middleware_a) { build_middleware("A") }
   let(:middleware_b) { build_middleware("B") }
   let(:middleware_c) { build_middleware("C") }
   let(:middleware_d) { build_middleware("D") }
 
   let(:terminal_middleware) { build_middleware("Terminal") }
-  subject(:handler) { Coach::Handler.new(terminal_middleware, handler: true) }
 
   before { Coach::Notifications.unsubscribe! }
 
   describe "#call" do
-    let(:a_spy) { spy("middleware a") }
-    let(:b_spy) { spy("middleware b") }
+    let(:a_double) { double }
+    let(:b_double) { double }
 
-    before { terminal_middleware.uses(middleware_a, callback: a_spy) }
-    before { terminal_middleware.uses(middleware_b, callback: b_spy) }
+    before do
+      terminal_middleware.uses(middleware_a, callback: a_double)
+      terminal_middleware.uses(middleware_b, callback: b_double)
+    end
 
     it "invokes all middleware in the chain" do
+      expect(a_double).to receive(:call)
+      expect(b_double).to receive(:call)
       result = handler.call({})
-      expect(a_spy).to have_received(:call)
-      expect(b_spy).to have_received(:call)
       expect(result).to eq(%w[A{} B{} Terminal{:handler=>true}])
     end
   end
@@ -45,9 +48,11 @@ describe Coach::Handler do
     end
 
     context "given a route that includes nested middleware" do
-      before { middleware_b.uses(middleware_c) }
-      before { middleware_a.uses(middleware_b) }
-      before { terminal_middleware.uses(middleware_a) }
+      before do
+        middleware_b.uses(middleware_c)
+        middleware_a.uses(middleware_b)
+        terminal_middleware.uses(middleware_a)
+      end
 
       it "assembles a sequence including all middleware" do
         expect(sequence).to match_array([middleware_c, middleware_b,
@@ -56,10 +61,12 @@ describe Coach::Handler do
     end
 
     context "when a middleware has been included more than once" do
-      before { middleware_a.uses(middleware_c) }
-      before { middleware_b.uses(middleware_c) }
-      before { terminal_middleware.uses(middleware_a) }
-      before { terminal_middleware.uses(middleware_b) }
+      before do
+        middleware_a.uses(middleware_c)
+        middleware_b.uses(middleware_c)
+        terminal_middleware.uses(middleware_a)
+        terminal_middleware.uses(middleware_b)
+      end
 
       it "only appears once" do
         expect(sequence).to match_array([middleware_c, middleware_a,
@@ -79,8 +86,10 @@ describe Coach::Handler do
   end
 
   describe "#build_request_chain" do
-    before { terminal_middleware.uses(middleware_a) }
-    before { terminal_middleware.uses(middleware_b, b: true) }
+    before do
+      terminal_middleware.uses(middleware_a)
+      terminal_middleware.uses(middleware_b, b: true)
+    end
 
     let(:root_item) { Coach::MiddlewareItem.new(terminal_middleware) }
     let(:sequence) { handler.build_sequence(root_item, {}) }
@@ -98,8 +107,10 @@ describe Coach::Handler do
     end
 
     context "with inheriting config" do
-      before { middleware_b.uses(middleware_c, ->(config) { config.slice(:b) }) }
-      before { middleware_b.uses(middleware_d) }
+      before do
+        middleware_b.uses(middleware_c, ->(config) { config.slice(:b) })
+        middleware_b.uses(middleware_d)
+      end
 
       it "calls lambda with parent middlewares config" do
         expect(handler.build_request_chain(sequence, {}).call).
@@ -112,13 +123,13 @@ describe Coach::Handler do
     before { terminal_middleware.uses(middleware_a) }
 
     describe "notifications" do
-      before { Coach::Notifications.subscribe! }
-
-      # Prevent RequestSerializer from erroring due to insufficient request mock
       before do
+        Coach::Notifications.subscribe!
+
+        # Prevent RequestSerializer from erroring due to insufficient request mock
         allow(Coach::RequestSerializer).
           to receive(:new).
-          and_return(double(serialize: {}))
+          and_return(instance_double("Coach::RequestSerializer", serialize: {}))
       end
 
       subject(:coach_events) do
@@ -139,9 +150,6 @@ describe Coach::Handler do
       it { is_expected.to include("coach.handler.finish") }
 
       context "when an exception is raised in the chain" do
-        let(:explosive_action) { -> { raise "AH" } }
-        before { terminal_middleware.uses(middleware_a, callback: explosive_action) }
-
         subject(:coach_events) do
           events = []
           subscription = ActiveSupport::Notifications.subscribe(/coach/) do |name, *args|
@@ -157,7 +165,11 @@ describe Coach::Handler do
           events
         end
 
-        it "should capture the error event with the metadata " do
+        let(:explosive_action) { -> { raise "AH" } }
+
+        before { terminal_middleware.uses(middleware_a, callback: explosive_action) }
+
+        it "captures the error event with the metadata" do
           is_expected.
             to include(["coach.handler.finish", hash_including(
               response: { status: 500 },
@@ -165,7 +177,7 @@ describe Coach::Handler do
             )])
         end
 
-        it "should bubble the error to the next handler" do
+        it "bubbles the error to the next handler" do
           expect { handler.call({}) }.to raise_error(StandardError, "AH")
         end
       end

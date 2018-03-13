@@ -1,4 +1,4 @@
-lib = File.expand_path("../lib", __FILE__)
+lib = File.expand_path("lib", __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "coach/version"
 
@@ -23,5 +23,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.2"
   spec.add_development_dependency "rspec-its", "~> 1.2"
   spec.add_development_dependency "rspec_junit_formatter", "~> 0.3.0"
-  spec.add_development_dependency "rubocop", "~> 0.52.0"
 end
