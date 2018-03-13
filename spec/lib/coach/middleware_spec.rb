@@ -17,8 +17,10 @@ describe Coach::Middleware do
       before { middleware_class.provides(:foo, :bar) }
 
       it "returns true" do
-        expect(middleware_class).to be_provides(:foo)
-        expect(middleware_class).to be_provides(:bar)
+        # rubocop:disable RSpec/PredicateMatcher
+        expect(middleware_class.provides?(:foo)).to be_truthy
+        expect(middleware_class.provides?(:bar)).to be_truthy
+        # rubocop:enable RSpec/PredicateMatcher
       end
     end
 
@@ -26,7 +28,9 @@ describe Coach::Middleware do
       before { middleware_class.provides(:foo) }
 
       it "returns false" do
-        expect(middleware_class).to_not be_provides(:baz)
+        # rubocop:disable RSpec/PredicateMatcher
+        expect(middleware_class.provides?(:baz)).to be_falsy
+        # rubocop:enable RSpec/PredicateMatcher
       end
     end
   end
