@@ -1,4 +1,5 @@
 require "coach/errors"
+require "active_support/core_ext/object/try"
 
 module Coach
   class Handler
