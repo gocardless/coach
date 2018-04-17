@@ -16,7 +16,7 @@ module Coach
 
     # Run validation on the root of the middleware chain
     delegate :validate!, to: :@root_item
-    delegate :publish, :instrument, to: ActiveSupport::Notifications
+    delegate :publish, :instrument, :notifier, to: ActiveSupport::Notifications
 
     # The Rack interface to handler - builds a middleware chain based on
     # the current request, and invokes it.
@@ -28,8 +28,8 @@ module Coach
 
       event = build_event(context)
 
-      publish("coach.handler.start", event.dup)
-      instrument("coach.handler.finish", event) do
+      publish_start(event.dup)
+      instrumented_call(event) do
         begin
           response = chain.instrument.call
         ensure
@@ -38,7 +38,7 @@ module Coach
           # simplest way to do this is pass the event by reference to ActiveSupport, then
           # modify the hash to contain this detail before the instrumentation completes.
           #
-          # This way, the last coach.handler.finish event will have all the details.
+          # This way, the last finish_handler.coach event will have all the details.
           status = response.try(:first) || STATUS_CODE_FOR_EXCEPTIONS
           event.merge!(
             response: { status: status },
@@ -86,6 +86,29 @@ module Coach
         middleware: @root_item.middleware.name,
         request: context[:request],
       }
+    end
+
+    def publish_start(event)
+      if notifier.listening?("coach.handler.start")
+        ActiveSupport::Deprecation.warn("The 'coach.handler.start' event has been " \
+          "renamed to 'start_handler.coach' and the old name will be removed in a " \
+          "future version.")
+        publish("coach.handler.start", event)
+      end
+      publish("start_handler.coach", event)
+    end
+
+    def instrumented_call(event, &block)
+      if notifier.listening?("coach.handler.finish")
+        ActiveSupport::Deprecation.warn("The 'coach.handler.find' event has been " \
+          "renamed to 'finish_handler.coach' and the old name will be removed in a " \
+          "future version.")
+        instrument("coach.handler.finish", event) do
+          instrument("finish_handler.coach", event, &block)
+        end
+      else
+        instrument("finish_handler.coach", event, &block)
+      end
     end
   end
 end

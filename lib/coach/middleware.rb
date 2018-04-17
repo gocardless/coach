@@ -73,10 +73,14 @@ module Coach
     # Use ActiveSupport to instrument the execution of the subsequent chain.
     def instrument
       proc do
-        ActiveSupport::Notifications.
-          publish("coach.middleware.start", middleware_event)
-        ActiveSupport::Notifications.
-          instrument("coach.middleware.finish", middleware_event) { call }
+        publish_start
+
+        if ActiveSupport::Notifications.notifier.listening?("coach.middleware.finish")
+          instrument_deprecated { call }
+        else
+          ActiveSupport::Notifications.
+            instrument("finish_middleware.coach", middleware_event) { call }
+        end
       end
     end
 
@@ -101,6 +105,29 @@ module Coach
         middleware: self.class.name,
         request: request,
       }
+    end
+
+    def publish_start
+      if ActiveSupport::Notifications.notifier.listening?("coach.middleware.start")
+        ActiveSupport::Deprecation.warn("The 'coach.middleware.start' event has " \
+          "been renamed to 'start_middleware.coach' and the old name will be " \
+          "removed in a future version.")
+        ActiveSupport::Notifications.
+          publish("coach.middleware.start", middleware_event)
+      end
+      ActiveSupport::Notifications.
+        publish("start_middleware.coach", middleware_event)
+    end
+
+    def instrument_deprecated(&block)
+      ActiveSupport::Deprecation.warn("The 'coach.middleware.finish' event has " \
+        "been renamed to 'finish_middleware.coach' and the old name will be " \
+        "removed in a future version.")
+      ActiveSupport::Notifications.
+        instrument("coach.middleware.finish", middleware_event) do
+        ActiveSupport::Notifications.
+          instrument("finish_middleware.coach", middleware_event, &block)
+      end
     end
   end
 end
