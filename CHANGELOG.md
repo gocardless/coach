@@ -1,6 +1,26 @@
 # CHANGELOG
 
-* [#29](https://github.com/gocardless/coach/pull/29) Replace Coach.require_matchers! with actual require
+# 1.0.0 / 2018-04-19
+
+## Breaking changes
+
+* [#41](https://github.com/gocardless/coach/pull/41) Ruby versions before 2.1 are no
+longer supported.
+* [#29](https://github.com/gocardless/coach/pull/29) To use Coach's included matchers
+in RSpec, you should now `require coach/rspec`. `Coach.require_matchers!` is deprecated
+and will be removed in a future version.
+* [#47](https://github.com/gocardless/coach/pull/47) If you're using Coach's support for
+[instrumentation](https://github.com/gocardless/coach#instrumentation) with
+`ActiveSupport::Notifications`, the event names Coach publishes have changed to be more
+consistent with other libraries. The previous names will work for now, but will be removed in a future version. The changes are as follows:
+
+| Before                  | After                   |
+| ----------------------- | ------------------------|
+| coach.handler.start     | start_handler.coach     |
+| coach.middleware.start  | start_middleware.coach  |
+| coach.middleware.finish | finish_middleware.coach |
+| coach.handler.finish    | finish_handler.coach    |
+| coach.request           | request.coach           |
 
 # 0.5.1 / 2017-08-21
 
