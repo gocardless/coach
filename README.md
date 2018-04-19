@@ -18,7 +18,7 @@ Coach improves your controller code by encouraging:
 To get started, just add Coach to your `Gemfile`, and then run `bundle`:
 
 ```ruby
-gem 'coach', '~> 0.5.2'
+gem 'coach'
 ```
 
 Coach works with Ruby versions 2.2 and onwards.
