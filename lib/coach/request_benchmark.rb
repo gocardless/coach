@@ -1,6 +1,6 @@
 module Coach
   # This class is built to aggregate data during the course of the request. It relies on
-  # 'coach.middleware.start' and 'coach.middleware.end' events to register the
+  # 'start_middleware.coach' and 'finish_middleware.coach' events to register the
   # start/end of each middleware element, and thereby calculate running times for each.
   #
   # Coach::Notifications makes use of this class to produce benchmark data for

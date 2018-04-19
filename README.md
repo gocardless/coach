@@ -294,13 +294,13 @@ Information for how to use `ActiveSupport`s notifications can be found
 
 | Event                         | Arguments                                              |
 |-------------------------------|------------------------------------------------------- |
-| `coach.handler.start`     | `event(:middleware, :request)`                         |
-| `coach.middleware.start`  | `event(:middleware, :request)`                         |
-| `coach.middleware.finish` | `start`, `finish`, `id`, `event(:middleware, :request)`|
-| `coach.handler.finish`    | `start`, `finish`, `id`, `event(:middleware, :request)`|
-| `coach.request`           | `event` containing request data and benchmarking       |
+| `start_handler.coach`     | `event(:middleware, :request)`                         |
+| `start_middleware.coach`  | `event(:middleware, :request)`                         |
+| `finish_middleware.coach` | `start`, `finish`, `id`, `event(:middleware, :request)`|
+| `finish_handler.coach`    | `start`, `finish`, `id`, `event(:middleware, :request)`|
+| `request.coach`           | `event` containing request data and benchmarking       |
 
-Of special interest is `coach.request`, which publishes statistics on an entire
+Of special interest is `request.coach`, which publishes statistics on an entire
 middleware chain and request. This data is particularly useful for logging, and is our
 solution to Rails `process_action.action_controller` event emitted on controller requests.
 

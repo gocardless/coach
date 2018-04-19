@@ -12,7 +12,7 @@ describe Coach::Notifications do
       to receive(:new).
       and_return(instance_double("Coach::RequestSerializer", serialize: {}))
 
-    ActiveSupport::Notifications.subscribe(/coach/) do |name, *_, event|
+    ActiveSupport::Notifications.subscribe(/\.coach$/) do |name, *_, event|
       events << [name, event]
     end
   end
@@ -20,7 +20,7 @@ describe Coach::Notifications do
   # Capture all Coach events
   let(:events) { [] }
   let(:middleware_event) do
-    event = events.find { |(name, _)| name == "coach.request" }
+    event = events.find { |(name, _)| name == "request.coach" }
     event && event[1]
   end
 
@@ -44,12 +44,12 @@ describe Coach::Notifications do
       expect(notifications.active?).to be(true)
     end
 
-    it "will now send coach.request" do
+    it "will now send request.coach" do
       handler.call({})
       expect(middleware_event).to_not be_nil
     end
 
-    describe "coach.request event" do
+    describe "request.coach event" do
       before { handler.call({}) }
 
       it "contains all middleware that have been run" do
@@ -69,13 +69,13 @@ describe Coach::Notifications do
       notifications.subscribe!
 
       handler.call({})
-      expect(events.count { |(name, _)| name == "coach.request" }).
+      expect(events.count { |(name, _)| name == "request.coach" }).
         to eq(1)
 
       notifications.unsubscribe!
 
       handler.call({})
-      expect(events.count { |(name, _)| name == "coach.request" }).
+      expect(events.count { |(name, _)| name == "request.coach" }).
         to eq(1)
     end
   end

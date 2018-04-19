@@ -8,15 +8,15 @@ module Coach
   # Notifications is used to coordinate the listening and aggregation of these middleware
   # notifications, while RequestEvent processes the published data.
   #
-  # Once a request has completed, Notifications will emit a 'coach.request' with
+  # Once a request has completed, Notifications will emit a 'requst.coach' with
   # aggregated request data.
   class Notifications
-    # Begin processing/emitting 'coach.request's
+    # Begin processing/emitting 'request.coach's
     def self.subscribe!
       instance.subscribe!
     end
 
-    # Cease to emit 'coach.request's
+    # Cease to emit 'request.coach's
     def self.unsubscribe!
       instance.unsubscribe!
     end
@@ -28,15 +28,15 @@ module Coach
     def subscribe!
       return if active?
 
-      @subscriptions << subscribe("handler.start") do |_, event|
+      @subscriptions << subscribe("start_handler") do |_, event|
         @benchmarks[event[:request].uuid] = RequestBenchmark.new(event[:middleware])
       end
 
-      @subscriptions << subscribe("middleware.finish") do |_name, start, finish, _, event|
+      @subscriptions << subscribe("finish_middleware") do |_name, start, finish, _, event|
         log_middleware_finish(event, start, finish)
       end
 
-      @subscriptions << subscribe("handler.finish") do |_name, start, finish, _, event|
+      @subscriptions << subscribe("finish_handler") do |_name, start, finish, _, event|
         log_handler_finish(event, start, finish)
       end
     end
@@ -63,7 +63,10 @@ module Coach
     end
 
     def subscribe(event, &block)
-      ActiveSupport::Notifications.subscribe("coach.#{event}", &block)
+      # New key formats don't include a period. If they do, they're the old deprecated
+      # format. No need to warn here since the warnings will show up from elsewhere.
+      key = event.include?(".") ? "coach.#{event}" : "#{event}.coach"
+      ActiveSupport::Notifications.subscribe(key, &block)
     end
 
     def log_middleware_finish(event, start, finish)
@@ -79,12 +82,17 @@ module Coach
     end
 
     # Receives a handler.finish event, with processed benchmark. Publishes to
-    # coach.request notification.
+    # request.coach notification.
     def broadcast(event, benchmark)
       serialized = RequestSerializer.new(event[:request]).serialize.
         merge(benchmark.stats).
         merge(event.slice(:response, :metadata))
-      ActiveSupport::Notifications.publish("coach.request", serialized)
+      if ActiveSupport::Notifications.notifier.listening?("coach.request")
+        ActiveSupport::Deprecation.warn("The 'coach.request' event has been renamed " \
+          "to 'request.coach' and the old name will be removed in a future version.")
+        ActiveSupport::Notifications.publish("coach.request", serialized)
+      end
+      ActiveSupport::Notifications.publish("request.coach", serialized)
     end
   end
 end
