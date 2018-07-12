@@ -174,7 +174,7 @@ describe Coach::Handler do
         it "captures the error event with the metadata" do
           is_expected.
             to include(["finish_handler.coach", hash_including(
-              response: { status: 500 },
+              status: 500,
               metadata: { A: true },
             )])
         end
@@ -239,7 +239,7 @@ describe Coach::Handler do
           it "captures the error event with the metadata" do
             is_expected.
               to include(["coach.handler.finish", hash_including(
-                response: { status: 500 },
+                status: 500,
                 metadata: { A: true },
               )])
           end

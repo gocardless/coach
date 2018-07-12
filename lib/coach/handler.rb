@@ -41,7 +41,7 @@ module Coach
           # This way, the last finish_handler.coach event will have all the details.
           status = response.try(:first) || STATUS_CODE_FOR_EXCEPTIONS
           event.merge!(
-            response: { status: status },
+            status: status,
             metadata: context.fetch(:_metadata, {}),
           )
         end
