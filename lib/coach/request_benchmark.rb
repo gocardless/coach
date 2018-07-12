@@ -32,8 +32,13 @@ module Coach
         endpoint_name: @endpoint_name,
         started_at: @start,
         duration: format_ms(@duration),
+        duration_seconds: @duration,
         chain: sorted_chain.map do |event|
-          { name: event[:name], duration: format_ms(event[:duration]) }
+          {
+            name: event[:name],
+            duration: format_ms(event[:duration]),
+            duration_seconds: event[:duration],
+          }
         end,
       }
     end
