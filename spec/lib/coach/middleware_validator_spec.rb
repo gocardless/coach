@@ -37,6 +37,7 @@ describe Coach::MiddlewareValidator do
           head_middleware.requires :c
           middleware_c.provides :c
         end
+
         it { is_expected.to_not raise_error }
       end
 
@@ -48,6 +49,7 @@ describe Coach::MiddlewareValidator do
           middleware_a.provides :a
           middleware_b.requires :a
         end
+
         it { is_expected.to_not raise_error }
       end
     end

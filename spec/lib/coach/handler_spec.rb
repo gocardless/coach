@@ -123,15 +123,6 @@ describe Coach::Handler do
     before { terminal_middleware.uses(middleware_a) }
 
     describe "notifications" do
-      before do
-        Coach::Notifications.subscribe!
-
-        # Prevent RequestSerializer from erroring due to insufficient request mock
-        allow(Coach::RequestSerializer).
-          to receive(:new).
-          and_return(instance_double("Coach::RequestSerializer", serialize: {}))
-      end
-
       subject(:coach_events) do
         events = []
         subscription = ActiveSupport::Notifications.
@@ -142,6 +133,15 @@ describe Coach::Handler do
         handler.call({})
         ActiveSupport::Notifications.unsubscribe(subscription)
         events
+      end
+
+      before do
+        Coach::Notifications.subscribe!
+
+        # Prevent RequestSerializer from erroring due to insufficient request mock
+        allow(Coach::RequestSerializer).
+          to receive(:new).
+          and_return(instance_double("Coach::RequestSerializer", serialize: {}))
       end
 
       it { is_expected.to include("start_handler.coach") }
