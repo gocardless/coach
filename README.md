@@ -13,6 +13,8 @@ Coach improves your controller code by encouraging:
 - **Testability** - Test each middleware in isolation, with effortless mocking of test
   data and natural RSpec matchers.
 
+For our policy on compatibility with Ruby and Rails versions, see [COMPATIBILITY.md](docs/COMPATIBILITY.md).
+
 # Installation
 
 To get started, just add Coach to your `Gemfile`, and then run `bundle`:
