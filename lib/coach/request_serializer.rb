@@ -14,6 +14,7 @@ module Coach
     # Applies sanitizing rules. Expects `header` to be in 'http_header_name' form.
     def self.apply_header_rule(header, value)
       return value if header_rules[header].nil?
+
       header_rules[header].call(value)
     end
 
@@ -54,6 +55,7 @@ module Coach
     def filtered_headers
       header_value_pairs = @request.filtered_env.map do |key, value|
         next unless key =~ /^HTTP_/
+
         [key.downcase, self.class.apply_header_rule(key.downcase, value)]
       end.compact
 

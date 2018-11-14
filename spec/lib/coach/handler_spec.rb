@@ -160,7 +160,7 @@ describe Coach::Handler do
 
           begin
             handler.call({})
-          rescue
+          rescue StandardError
             :continue_anyway
           end
           ActiveSupport::Notifications.unsubscribe(subscription)
@@ -172,7 +172,7 @@ describe Coach::Handler do
         before { terminal_middleware.uses(middleware_a, callback: explosive_action) }
 
         it "captures the error event with the metadata" do
-          is_expected.
+          expect(coach_events).
             to include(["finish_handler.coach", hash_including(
               response: { status: 500 },
               metadata: { A: true },
@@ -225,7 +225,7 @@ describe Coach::Handler do
 
             begin
               handler.call({})
-            rescue
+            rescue StandardError
               :continue_anyway
             end
             ActiveSupport::Notifications.unsubscribe(subscription)
@@ -237,7 +237,7 @@ describe Coach::Handler do
           before { terminal_middleware.uses(middleware_a, callback: explosive_action) }
 
           it "captures the error event with the metadata" do
-            is_expected.
+            expect(coach_events).
               to include(["coach.handler.finish", hash_including(
                 response: { status: 500 },
                 metadata: { A: true },

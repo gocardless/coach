@@ -43,6 +43,7 @@ module Coach
 
     def unsubscribe!
       return unless active?
+
       while @subscriptions.any?
         ActiveSupport::Notifications.unsubscribe(@subscriptions.pop)
       end
@@ -72,6 +73,7 @@ module Coach
     def log_middleware_finish(event, start, finish)
       benchmark_for_request = @benchmarks[event[:request].uuid]
       return unless benchmark_for_request.present?
+
       benchmark_for_request.notify(event[:middleware], start, finish)
     end
 
