@@ -40,6 +40,10 @@ module Coach
       end
     end
 
+    def self.requires?(provision)
+      requirements.include?(provision)
+    end
+
     attr_reader :next_middleware, :config
 
     # Middleware gets access to a shared context, which is populated by other
