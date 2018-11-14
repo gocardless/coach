@@ -35,6 +35,29 @@ describe Coach::Middleware do
     end
   end
 
+  describe ".requires?" do
+    context "given names it does require" do
+      before { middleware_class.requires(:foo, :bar) }
+
+      it "returns true" do
+        # rubocop:disable RSpec/PredicateMatcher
+        expect(middleware_class.requires?(:foo)).to be_truthy
+        expect(middleware_class.requires?(:bar)).to be_truthy
+        # rubocop:enable RSpec/PredicateMatcher
+      end
+    end
+
+    context "given names it doesn't require" do
+      before { middleware_class.requires(:foo) }
+
+      it "returns false" do
+        # rubocop:disable RSpec/PredicateMatcher
+        expect(middleware_class.requires?(:bar)).to be_falsy
+        # rubocop:enable RSpec/PredicateMatcher
+      end
+    end
+  end
+
   describe "#provide" do
     before { middleware_class.provides(:foo) }
 
