@@ -4,10 +4,10 @@ require_relative "errors"
 module Coach
   class Router
     ACTION_TRAITS = {
-      index:   { method: :get },
-      show:    { method: :get, url: ":id" },
-      create:  { method: :post },
-      update:  { method: :put, url: ":id" },
+      index: { method: :get },
+      show: { method: :get, url: ":id" },
+      create: { method: :post },
+      update: { method: :put, url: ":id" },
       destroy: { method: :delete, url: ":id" },
     }.each_value(&:freeze).freeze
 
