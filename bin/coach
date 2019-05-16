@@ -26,7 +26,16 @@ Slop.parse do
       unless args.length == 2
         raise "Two args please!"
       end
-      Coach::Cli::ProviderFinder.new(args[0], args[1]).run
+      Coach::Cli::ProviderFinder.new(args[0], args[1]).find_provider
+    end
+  end
+
+  command "find-chain" do
+    run do |_, args|
+      unless args.length == 2
+        raise "Two args please!"
+      end
+      Coach::Cli::ProviderFinder.new(args[0], args[1]).find_chain
     end
   end
 end
