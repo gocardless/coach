@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+require "slop"
+require "coach/cli/provider_finder"
+
+begin
+  require File.join(Dir.pwd, "config/environment")
+rescue LoadError
+  puts <<~EOS
+    Could not load your Rails app
+    =============================
+
+    Currently the coach CLI assumes you have a config/environment.rb file that
+    we can load. We believe this is true of Rails apps in general.
+
+    Please raise an issue if that's not the case!
+
+    https://github.com/gocardless/coach/issues
+  EOS
+  exit 1
+end
+
+Slop.parse do
+  command "find-provider" do
+    run do |_, args|
+      unless args.length == 2
+        raise "Two args please!"
+      end
+      Coach::Cli::ProviderFinder.new(args[0], args[1]).run
+    end
+  end
+end
