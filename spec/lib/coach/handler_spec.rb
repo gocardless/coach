@@ -126,9 +126,7 @@ describe Coach::Handler do
       subject(:coach_events) do
         events = []
         subscription = ActiveSupport::Notifications.
-          subscribe(/\.coach$/) do |name, *_args|
-          events << name
-        end
+          subscribe(/\.coach$/) { |name, *_args| events << name }
 
         handler.call({})
         ActiveSupport::Notifications.unsubscribe(subscription)
@@ -181,72 +179,6 @@ describe Coach::Handler do
 
         it "bubbles the error to the next handler" do
           expect { handler.call({}) }.to raise_error(StandardError, "AH")
-        end
-      end
-
-      context "deprecations" do
-        subject(:coach_events) do
-          events = []
-          subscription = ActiveSupport::Notifications.
-            subscribe(/^coach\./) do |name, *_args|
-            events << name
-          end
-
-          handler.call({})
-          ActiveSupport::Notifications.unsubscribe(subscription)
-          events
-        end
-
-        let!(:deprecations_silenced) do
-          ActiveSupport::Deprecation.silenced
-        end
-
-        before do
-          ActiveSupport::Deprecation.silenced = true
-        end
-
-        after do
-          ActiveSupport::Deprecation.silenced = deprecations_silenced
-        end
-
-        it { is_expected.to include("coach.handler.start") }
-        it { is_expected.to include("coach.middleware.start") }
-        it { is_expected.to include("coach.request") }
-        it { is_expected.to include("coach.middleware.finish") }
-        it { is_expected.to include("coach.handler.finish") }
-
-        context "when an exception is raised in the chain" do
-          subject(:coach_events) do
-            events = []
-            subscription = ActiveSupport::Notifications.
-              subscribe(/^coach\./) do |name, *args|
-              events << [name, args.last]
-            end
-
-            begin
-              handler.call({})
-            rescue StandardError
-              :continue_anyway
-            end
-            ActiveSupport::Notifications.unsubscribe(subscription)
-            events
-          end
-
-          let(:explosive_action) { -> { raise "AH" } }
-
-          before { terminal_middleware.uses(middleware_a, callback: explosive_action) }
-
-          it "captures the error event with the metadata" do
-            expect(coach_events).
-              to include(["coach.handler.finish", hash_including(
-                response: { status: 500 },
-                metadata: { A: true },
-              )])
-          end
-
-          it "bubbles the error to the next handler" do
-            expect { handler.call({}) }.to raise_error(StandardError, "AH")
-          end
         end
       end
     end

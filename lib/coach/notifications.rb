@@ -64,10 +64,7 @@ module Coach
     end
 
     def subscribe(event, &block)
-      # New key formats don't include a period. If they do, they're the old deprecated
-      # format. No need to warn here since the warnings will show up from elsewhere.
-      key = event.include?(".") ? "coach.#{event}" : "#{event}.coach"
-      ActiveSupport::Notifications.subscribe(key, &block)
+      ActiveSupport::Notifications.subscribe("#{event}.coach", &block)
     end
 
     def log_middleware_finish(event, start, finish)
@@ -89,11 +86,6 @@ module Coach
       serialized = RequestSerializer.new(event[:request]).serialize.
         merge(benchmark.stats).
         merge(event.slice(:response, :metadata))
-      if ActiveSupport::Notifications.notifier.listening?("coach.request")
-        ActiveSupport::Deprecation.warn("The 'coach.request' event has been renamed " \
-          "to 'request.coach' and the old name will be removed in a future version.")
-        ActiveSupport::Notifications.publish("coach.request", serialized)
-      end
       ActiveSupport::Notifications.publish("request.coach", serialized)
     end
   end
