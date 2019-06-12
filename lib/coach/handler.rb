@@ -28,8 +28,8 @@ module Coach
 
       event = build_event(context)
 
-      publish_start(event.dup)
-      instrumented_call(event) do
+      publish("start_handler.coach", event.dup)
+      instrument("finish_handler.coach", event) do
         begin
           response = chain.instrument.call
         ensure
@@ -86,29 +86,6 @@ module Coach
         middleware: @root_item.middleware.name,
         request: context[:request],
       }
-    end
-
-    def publish_start(event)
-      if notifier.listening?("coach.handler.start")
-        ActiveSupport::Deprecation.warn("The 'coach.handler.start' event has been " \
-          "renamed to 'start_handler.coach' and the old name will be removed in a " \
-          "future version.")
-        publish("coach.handler.start", event)
-      end
-      publish("start_handler.coach", event)
-    end
-
-    def instrumented_call(event, &block)
-      if notifier.listening?("coach.handler.finish")
-        ActiveSupport::Deprecation.warn("The 'coach.handler.find' event has been " \
-          "renamed to 'finish_handler.coach' and the old name will be removed in a " \
-          "future version.")
-        instrument("coach.handler.finish", event) do
-          instrument("finish_handler.coach", event, &block)
-        end
-      else
-        instrument("finish_handler.coach", event, &block)
-      end
     end
   end
 end

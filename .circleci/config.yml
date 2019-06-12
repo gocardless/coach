@@ -11,7 +11,7 @@ references:
     - type: cache-restore
       key: coach-bundler-{{ checksum "coach.gemspec" }}-{{ checksum "~/RAILS_VERSION.txt" }}
 
-    - run: gem install bundler
+    - run: gem install bundler -v 1.11.2
 
     - run: bundle install --path vendor/bundle
 
