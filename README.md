@@ -1,7 +1,7 @@
 # Coach
 
 [![Gem Version](https://badge.fury.io/rb/coach.svg)](http://badge.fury.io/rb/coach)
-[![Build Status](https://travis-ci.org/gocardless/coach.svg?branch=master)](https://travis-ci.org/gocardless/coach)
+[![CircleCI](https://circleci.com/gh/gocardless/coach.svg?style=svg)](https://circleci.com/gh/gocardless/coach)
 [![Code Climate](https://codeclimate.com/github/gocardless/coach.svg)](https://codeclimate.com/github/gocardless/coach)
 
 Coach improves your controller code by encouraging:
