@@ -1,5 +1,11 @@
 # CHANGELOG
 
+# Unreleased
+
+* [#59](https://github.com/gocardless/coach/pull/59) Request data included in the
+  `request.coach` event includes a `session_ip` field which replaces the erroneously named
+  `session_id`. The latter is deprecated and will be removed in a future release.
+
 # 1.0.0 / 2018-04-19
 
 ## Breaking changes
