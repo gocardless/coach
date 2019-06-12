@@ -40,7 +40,8 @@ module Coach
 
         # Extra request info
         headers: filtered_headers,
-        session_id: @request.remote_ip,
+        session_id: @request.remote_ip, # TODO: remove in a future release
+        session_ip: @request.remote_ip,
       }
     end
 
