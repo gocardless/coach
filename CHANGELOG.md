@@ -6,6 +6,18 @@
   `request.coach` event includes a `session_ip` field which replaces the erroneously named
   `session_id`. The latter is deprecated and will be removed in a future release.
 
+* [#60](https://github.com/gocardless/coach/pull/60) Add `Middleware.requires?`, which
+  behaves like `Middleware.provides?` but for requirements.
+
+## Breaking changes
+
+* [#70](https://github.com/gocardless/coach/pull/70) The following deprecated event names have been removed:
+  * `coach.handler.start`
+  * `coach.middleware.start`
+  * `coach.middleware.finish`
+  * `coach.handler.finish`
+  * `coach.request`
+
 # 1.0.0 / 2018-04-19
 
 ## Breaking changes
