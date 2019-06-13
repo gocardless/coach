@@ -21,6 +21,9 @@
   * `coach.handler.finish`
   * `coach.request`
 
+* [#56](https://github.com/gocardless/coach/pull/56) Support for Ruby 2.2 and 2.3 has been
+  dropped. See our [compatibility policy](https://github.com/gocardless/coach/blob/master/docs/COMPATIBILITY.md) for more information.
+
 # 1.0.0 / 2018-04-19
 
 ## Breaking changes
