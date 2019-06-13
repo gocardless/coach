@@ -24,6 +24,7 @@ describe Coach::RequestBenchmark do
 
     it "computes overall duration" do
       expect(stats[:duration]).to eq(5000)
+      expect(stats[:duration_seconds]).to eq(5.0)
     end
 
     it "captures the endpoint_name" do
@@ -35,11 +36,11 @@ describe Coach::RequestBenchmark do
     end
 
     it "computes duration of middleware with no children" do
-      expect(stats[:chain]).to include(name: "B", duration: 1000)
+      expect(stats[:chain]).to include(name: "B", duration: 1000, duration_seconds: 1.0)
     end
 
     it "adjusts duration of middleware for their children" do
-      expect(stats[:chain]).to include(name: "A", duration: 2000)
+      expect(stats[:chain]).to include(name: "A", duration: 2000, duration_seconds: 2.0)
     end
 
     it "correctly orders chain" do

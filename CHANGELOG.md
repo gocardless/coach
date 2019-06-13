@@ -9,6 +9,9 @@
 * [#60](https://github.com/gocardless/coach/pull/60) Add `Middleware.requires?`, which
   behaves like `Middleware.provides?` but for requirements.
 
+* [#52](https://github.com/gocardless/coach/pull/52) Add `duration_seconds` to statistic
+  logging. The `duration` field is now deprecated and will be removed in a future release.
+
 ## Breaking changes
 
 * [#70](https://github.com/gocardless/coach/pull/70) The following deprecated event names have been removed:
