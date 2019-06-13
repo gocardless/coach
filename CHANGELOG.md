@@ -2,15 +2,9 @@
 
 # Unreleased
 
-* [#59](https://github.com/gocardless/coach/pull/59) Request data included in the
-  `request.coach` event includes a `session_ip` field which replaces the erroneously named
-  `session_id`. The latter is deprecated and will be removed in a future release.
+No unreleased changes.
 
-* [#60](https://github.com/gocardless/coach/pull/60) Add `Middleware.requires?`, which
-  behaves like `Middleware.provides?` but for requirements.
-
-* [#52](https://github.com/gocardless/coach/pull/52) Add `duration_seconds` to statistic
-  logging. The `duration` field is now deprecated and will be removed in a future release.
+# 2.0.0 / 2019-06-13
 
 ## Breaking changes
 
@@ -23,6 +17,18 @@
 
 * [#56](https://github.com/gocardless/coach/pull/56) Support for Ruby 2.2 and 2.3 has been
   dropped. See our [compatibility policy](https://github.com/gocardless/coach/blob/master/docs/COMPATIBILITY.md) for more information.
+
+## Other changes
+
+* [#59](https://github.com/gocardless/coach/pull/59) Request data included in the
+  `request.coach` event includes a `session_ip` field which replaces the erroneously named
+  `session_id`. The latter is deprecated and will be removed in a future release.
+
+* [#60](https://github.com/gocardless/coach/pull/60) Add `Middleware.requires?`, which
+  behaves like `Middleware.provides?` but for requirements.
+
+* [#52](https://github.com/gocardless/coach/pull/52) Add `duration_seconds` to statistic
+  logging. The `duration` field is now deprecated and will be removed in a future release.
 
 # 1.0.0 / 2018-04-19
 
