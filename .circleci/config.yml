@@ -33,30 +33,6 @@ references:
 
     - run: bundle exec rubocop
 jobs:
-  build-ruby22-rails515:
-    docker:
-      - image: ruby:2.2
-        environment:
-          - RAILS_VERSION=5.1.5
-    steps: *steps
-  build-ruby22-rails4210:
-    docker:
-      - image: ruby:2.2
-        environment:
-          - RAILS_VERSION=4.2.10
-    steps: *steps
-  build-ruby23-rails515:
-    docker:
-      - image: ruby:2.3
-        environment:
-          - RAILS_VERSION=5.1.5
-    steps: *steps
-  build-ruby23-rails4210:
-    docker:
-      - image: ruby:2.3
-        environment:
-          - RAILS_VERSION=4.2.10
-    steps: *steps
   build-ruby24-rails515:
     docker:
       - image: ruby:2.4
@@ -86,10 +62,6 @@ workflows:
   version: 2
   tests:
     jobs:
-      - build-ruby22-rails515
-      - build-ruby22-rails4210
-      - build-ruby23-rails515
-      - build-ruby23-rails4210
       - build-ruby24-rails515
       - build-ruby24-rails4210
       - build-ruby25-rails515

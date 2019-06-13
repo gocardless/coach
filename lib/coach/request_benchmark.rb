@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Coach
   # This class is built to aggregate data during the course of the request. It relies on
   # 'start_middleware.coach' and 'finish_middleware.coach' events to register the

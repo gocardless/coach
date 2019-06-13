@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "coach/errors"
 require "active_support/core_ext/object/try"
 

@@ -4,7 +4,7 @@ inherit_gem:
   gc_ruboconfig: rubocop.yml
 
 AllCops:
-  TargetRubyVersion: 2.2
+  TargetRubyVersion: 2.4
 
 Metrics/MethodLength:
   Max: 15

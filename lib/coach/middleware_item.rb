@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "coach/errors"
 require "coach/middleware_validator"
 
@@ -13,7 +15,7 @@ module Coach
     def build_middleware(context, successor)
       @middleware.
         new(context,
-            successor && successor.instrument,
+            successor&.instrument,
             config)
     end
 
