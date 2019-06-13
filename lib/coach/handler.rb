@@ -10,10 +10,10 @@ module Coach
     def initialize(middleware, config = {})
       @root_item = MiddlewareItem.new(middleware, config)
       validate!
-    rescue Coach::Errors::MiddlewareDependencyNotMet => error
+    rescue Coach::Errors::MiddlewareDependencyNotMet => e
       # Remove noise of validation stack trace, reset to the handler callsite
-      error.backtrace.clear.concat(Thread.current.backtrace)
-      raise error
+      e.backtrace.clear.concat(Thread.current.backtrace)
+      raise e
     end
 
     # Run validation on the root of the middleware chain
