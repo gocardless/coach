@@ -6,6 +6,9 @@ inherit_gem:
 AllCops:
   TargetRubyVersion: 2.2
 
+Metrics/MethodLength:
+  Max: 15
+
 Style/RescueStandardError:
   Exclude:
     - "*/**/*_spec.rb"

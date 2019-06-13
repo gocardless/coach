@@ -3,7 +3,6 @@ require "coach/middleware"
 
 # Middleware stubbing ######################################
 
-# rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/AbcSize
 def build_middleware(name)
   Class.new(Coach::Middleware) do
@@ -28,7 +27,6 @@ def build_middleware(name)
   end
 end
 # rubocop:enable Metrics/AbcSize
-# rubocop:enable Metrics/MethodLength
 
 def null_middleware
   double(call: nil)
