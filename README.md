@@ -309,6 +309,17 @@ solution to Rails `process_action.action_controller` event emitted on controller
 The benchmarking data includes information on how long each middleware took to process,
 along with the total duration of the chain.
 
+For coach to emit `request.coach` events, it first needs to be subscribed to handler/middleware events:
+
+```ruby
+Coach::Notifications.subscribe!
+
+# Now you can subscribe to and use request.coach events, e.g.
+ActiveSupport::Notifications.subscribe("request.coach") do |_, event|
+  Rails.logger.info(event)
+end
+```
+
 You can add additional metadata to the notifications published by Coach by calling the
 `log_metadata` method from inside your Coach middlewares.
 
