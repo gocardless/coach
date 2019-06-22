@@ -323,7 +323,7 @@ end
 You can add additional metadata to the notifications published by Coach by calling the
 `log_metadata` method from inside your Coach middlewares.
 
-```
+```ruby
 class Tracking < Coach::Middleware
   requires :user
 
