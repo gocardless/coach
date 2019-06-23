@@ -10,7 +10,7 @@ module Coach
   # Notifications is used to coordinate the listening and aggregation of these middleware
   # notifications, while RequestEvent processes the published data.
   #
-  # Once a request has completed, Notifications will emit a 'requst.coach' with
+  # Once a request has completed, Notifications will emit a 'request.coach' event with
   # aggregated request data.
   class Notifications
     # Begin processing/emitting 'request.coach's
