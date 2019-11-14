@@ -64,7 +64,7 @@ module Coach
       header_value_pairs = @request.filtered_env.map do |key, value|
         key = if RACK_UNPREFIXED_HEADERS.include?(key)
                 "http_#{key.downcase}"
-              elsif key =~ /^HTTP_/
+              elsif key.match?(/^HTTP_/)
                 key.downcase
               end
 
