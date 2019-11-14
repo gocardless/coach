@@ -2,6 +2,11 @@
 
 module Coach
   class RequestSerializer
+    # Rack specs dictate that CONTENT_TYPE and CONTENT_LENGTH
+    # are not prefixed with HTTP_.
+    # See https://rubydoc.info/github/rack/rack/master/file/SPEC
+    RACK_UNPREFIXED_HEADERS = %w[CONTENT_TYPE CONTENT_LENGTH].freeze
+
     def self.header_rules
       @header_rules ||= {}
     end
@@ -57,9 +62,13 @@ module Coach
 
     def filtered_headers
       header_value_pairs = @request.filtered_env.map do |key, value|
-        next unless key =~ /^HTTP_/
+        key = if RACK_UNPREFIXED_HEADERS.include?(key)
+                "http_#{key.downcase}"
+              elsif key =~ /^HTTP_/
+                key.downcase
+              end
 
-        [key.downcase, self.class.apply_header_rule(key.downcase, value)]
+        [key, self.class.apply_header_rule(key, value)] if key
       end.compact
 
       Hash[header_value_pairs]

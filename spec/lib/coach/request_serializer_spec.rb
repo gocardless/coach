@@ -47,10 +47,14 @@ describe Coach::RequestSerializer do
                                                    uuid: nil,
                                                    method: nil,
                                                    filtered_parameters: nil,
-                                                   filtered_env: {
-                                                     "foo" => "bar",
-                                                     "HTTP_foo" => "bar",
-                                                   })
+                                                   filtered_env: filtered_env)
+      end
+
+      let(:filtered_env) do
+        {
+          "foo" => "bar",
+          "HTTP_foo" => "bar",
+        }
       end
 
       describe "#serialize" do
@@ -62,11 +66,31 @@ describe Coach::RequestSerializer do
           expect(serialized[:path]).to eq("unknown")
         end
 
-        it "filters headers allowing only those prefixed with 'HTTP_'" do
-          allow(mock_request).to receive(:fullpath).and_return(nil)
+        context "filters headers" do
+          before do
+            allow(mock_request).to receive(:fullpath).and_return(nil)
+          end
 
-          expect(serialized[:headers]).to_not include("foo")
-          expect(serialized[:headers]).to include("http_foo")
+          it "allowing those prefixed with 'HTTP_'" do
+            expect(serialized[:headers]).to_not include("foo")
+            expect(serialized[:headers]).to include("http_foo")
+          end
+
+          context "Content-Type and Content-Length" do
+            let(:filtered_env) do
+              {
+                "foo" => "foo",
+                "CONTENT_TYPE" => "application/json",
+                "CONTENT_LENGTH" => 42,
+              }
+            end
+
+            it "prefixing with 'http_'" do
+              expect(serialized[:headers]).to_not include("foo")
+              expect(serialized[:headers]).to include("http_content_type")
+              expect(serialized[:headers]).to include("http_content_length")
+            end
+          end
         end
       end
     end

@@ -4,6 +4,13 @@
 
 No unreleased changes.
 
+# 2.1.0 / 2019-11-14
+
+* [#79](https://github.com/gocardless/coach/pull/79) RequestSerializer will now
+  return the 'http_content_type' and 'http_content_length' filtered headers.
+
+* [#75](https://github.com/gocardless/coach/pull/75) Documentation update.
+
 # 2.0.0 / 2019-06-13
 
 ## Breaking changes
