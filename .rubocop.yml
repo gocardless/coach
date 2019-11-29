@@ -13,7 +13,7 @@ Style/RescueStandardError:
   Exclude:
     - "*/**/*_spec.rb"
 
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
   AllowedNames:
     # These are the default allowed names, set by Rubocop
     - io
