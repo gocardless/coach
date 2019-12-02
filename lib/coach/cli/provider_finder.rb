@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "coach/cli/errors"
 require "set"
 
 module Coach
@@ -11,22 +12,21 @@ module Coach
       end
 
       def find_provider
-        if Module.const_defined?(@middleware_name)
-          middleware = Module.const_get(@middleware_name)
-        else
-          raise "That middleware doesn't exist!"
-        end
+        enforce_middleware_exists!
+        middleware = Module.const_get(@middleware_name)
+
+        enforce_middleware_requires_value!(middleware)
 
         provider_mapping = build_provider_mapping(middleware, Hash.new { Set.new })
 
         if provider_mapping.key?(@value_name.to_sym)
           providers = provider_mapping[@value_name.to_sym]
         else
-          raise "That value isn't provided!"
+          err = Errors::ValueNotProvidedError.new(@middleware_name, @value_name)
+          raise err
         end
 
-        puts "Value `#{@value_name}` is provided to `#{@middleware_name}` by:\n\n"
-        puts providers.to_a.join("\n")
+        providers.to_a.map(&:to_s)
       end
 
       def find_chain
@@ -59,6 +59,20 @@ module Coach
       end
 
       private
+
+      def enforce_middleware_exists!
+        unless Module.const_defined?(@middleware_name)
+          err = Errors::MiddlewareNotFoundError.new(@middleware_name)
+          raise err
+        end
+      end
+
+      def enforce_middleware_requires_value!(middleware)
+        unless middleware.requires?(@value_name.to_sym)
+          err = Errors::ValueNotRequiredError.new(@middleware_name, @value_name)
+          raise err
+        end
+      end
 
       def build_provider_mapping(middleware, mapping)
         middleware.provided.each do |p|

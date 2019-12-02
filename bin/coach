@@ -26,7 +26,13 @@ Slop.parse do
       unless args.length == 2
         raise "Two args please!"
       end
-      Coach::Cli::ProviderFinder.new(args[0], args[1]).find_provider
+      middleware_name = args[0]
+      value_name = args[1]
+
+      result = Coach::Cli::ProviderFinder.new(args[0], args[1]).find_provider
+
+      puts "Value `#{value_name}` is provided to `#{middleware_name}` by:\n\n"
+      puts result.to_a.join("\n")
     end
   end
 
