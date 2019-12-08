@@ -334,6 +334,77 @@ class Tracking < Coach::Middleware
 end
 ```
 
+# Coach CLI
+
+As well as the library, the Coach gem comes with a command line tool - `coach`.
+
+When working in a large codebase that uses Coach, one of the challenges you may run into
+is understanding the `provide`/`require` graph made up of all the middleware chains you've
+built. While the library enforces the correctness of those chains at boot time, it doesn't
+help you understand those dependencies. That's where the `coach` CLI comes in!
+
+Currently, the `coach` CLI supports two commands.
+
+## `find-provider`
+
+`find-provider` is the simpler of the two commands. Given the name of a Coach middleware
+and a value that it requires, it outputs the name of the middleware that provides it.
+
+```bash
+$ bundle exec coach find-provider HelloUser user
+Value `user` is provided to `HelloUser` by:
+
+Authentication
+```
+
+If there are multiple middlewares in the chain that provide the same value, all of them
+will be listed.
+
+## `find-chain`
+
+`find-chain` is the more advanced of the two commands, and is most useful in larger
+codebases. Given the name of a Coach middleware and a value it requires, it outputs the
+chains of middleware between the specified middleware and the one that provides the
+required value.
+
+```bash
+# Note that we've assumed an intermediate middleware - `UserDecorator` exists in this
+# example to make the functionality of the command clearer.
+$ bundle exec coach find-chain HelloUser user
+Value `user` is provided to `HelloUser` by:
+
+HelloUser -> UserDecorator -> Authentication
+```
+
+If there are multiple paths to a middleware that provides that value, all of them will be
+listed. Similarly, if multiple middlewares provide the same value, all of them will be
+listed.
+
+## Spring integration
+
+Given that the Coach CLI is mostly aimed at large Rails apps using Coach, it would be an
+oversight for us not to integrate it with [Spring](https://github.com/rails/spring/).
+
+To enable the use of Spring with the Coach CLI, add the following to `config/spring.rb` or
+an equivalent Rails config file.
+
+```ruby
+require "spring/commands/coach"
+```
+
+On GoCardless' main Rails app, using Spring reduces the time to run `coach` commands from
+around 15s to 1s.
+
+## Future work
+
+While we think the commands we've already built are useful, we do have some ideas to go
+further, including:
+
+  - Better formatting of provider chains
+  - Outputting DOT format files to visualise with Graphviz
+  - Editor integrations (e.g. showing the provider chains when hovering a `requires`
+    statement)
+
 # License & Contributing
 
 * Coach is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
