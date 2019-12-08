@@ -118,4 +118,131 @@ describe Coach::Cli::ProviderFinder do
       end
     end
   end
+
+  describe "#find_chain" do
+    context "when there is a single provider" do
+      let(:middleware_name) { "RequiringMiddleware" }
+      let(:value_name) { "provided_value" }
+
+      before do
+        stub_const("ProvidingMiddleware", Class.new(Coach::Middleware) do
+          provides :provided_value
+        end)
+        stub_const(middleware_name, Class.new(Coach::Middleware) do
+          uses ProvidingMiddleware
+
+          requires :provided_value
+        end)
+      end
+
+      it "returns the providing middleware" do
+        expect(provider_finder.find_chain).
+          to eq [%w[ProvidingMiddleware RequiringMiddleware]].to_set
+      end
+    end
+
+    context "when there are multiple paths to a single provider" do
+      let(:middleware_name) { "RequiringMiddleware" }
+      let(:value_name) { "provided_value" }
+
+      before do
+        stub_const("ProvidingMiddleware", Class.new(Coach::Middleware) do
+          provides :provided_value
+        end)
+        stub_const("FirstIntermediateMiddleware", Class.new(Coach::Middleware) do
+          uses ProvidingMiddleware
+        end)
+        stub_const("SecondIntermediateMiddleware", Class.new(Coach::Middleware) do
+          uses ProvidingMiddleware
+        end)
+        stub_const(middleware_name, Class.new(Coach::Middleware) do
+          uses FirstIntermediateMiddleware
+          uses SecondIntermediateMiddleware
+
+          requires :provided_value
+        end)
+      end
+
+      it "returns multiple middleware chains" do
+        expect(provider_finder.find_chain).
+          to eq [
+            %w[ProvidingMiddleware FirstIntermediateMiddleware RequiringMiddleware],
+            %w[ProvidingMiddleware SecondIntermediateMiddleware RequiringMiddleware],
+          ].to_set
+      end
+    end
+
+    context "when there are multiple paths to multiple providers" do
+      let(:middleware_name) { "RequiringMiddleware" }
+      let(:value_name) { "provided_value" }
+
+      before do
+        stub_const("FirstProvidingMiddleware", Class.new(Coach::Middleware) do
+          provides :provided_value
+        end)
+        stub_const("SecondProvidingMiddleware", Class.new(Coach::Middleware) do
+          provides :provided_value
+        end)
+        stub_const("FirstIntermediateMiddleware", Class.new(Coach::Middleware) do
+          uses FirstProvidingMiddleware
+        end)
+        stub_const("SecondIntermediateMiddleware", Class.new(Coach::Middleware) do
+          uses SecondProvidingMiddleware
+        end)
+        stub_const(middleware_name, Class.new(Coach::Middleware) do
+          uses FirstIntermediateMiddleware
+          uses SecondIntermediateMiddleware
+
+          requires :provided_value
+        end)
+      end
+
+      it "returns multiple middleware chains" do
+        expect(provider_finder.find_chain).
+          to eq([
+            %w[FirstProvidingMiddleware FirstIntermediateMiddleware RequiringMiddleware],
+            %w[SecondProvidingMiddleware SecondIntermediateMiddleware RequiringMiddleware], # rubocop:disable Metrics/LineLength
+          ].to_set)
+      end
+    end
+
+    context "when the middleware can't be found" do
+      let(:middleware_name) { "MiddlewareThatDoesntExist" }
+
+      it "raises a MiddlewareNotFoundError" do
+        expect { provider_finder.find_chain }.
+          to raise_error(Coach::Cli::Errors::MiddlewareNotFoundError)
+      end
+    end
+
+    context "when the middleware doesn't require the specified value" do
+      let(:middleware_name) { "MiddlewareWithoutRequires" }
+      let(:value_name) { "value_that_doesnt_exist" }
+
+      before do
+        stub_const(middleware_name, Class.new(Coach::Middleware))
+      end
+
+      it "raises a ValueNotRequiredError" do
+        expect { provider_finder.find_chain }.
+          to raise_error(Coach::Cli::Errors::ValueNotRequiredError)
+      end
+    end
+
+    context "when the middleware isn't provided with a value it requires" do
+      let(:middleware_name) { "MiddlewareWithMissingProvide" }
+      let(:value_name) { "value_that_isnt_provided" }
+
+      before do
+        stub_const(middleware_name, Class.new(Coach::Middleware) do
+          requires :value_that_isnt_provided
+        end)
+      end
+
+      it "raises a ValueNotProvidedError" do
+        expect { provider_finder.find_chain }.
+          to raise_error(Coach::Cli::Errors::ValueNotProvidedError)
+      end
+    end
+  end
 end

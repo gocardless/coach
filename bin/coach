@@ -41,7 +41,23 @@ Slop.parse do
       unless args.length == 2
         raise "Two args please!"
       end
-      Coach::Cli::ProviderFinder.new(args[0], args[1]).find_chain
+      middleware_name = args[0]
+      value_name = args[1]
+
+      chains = Coach::Cli::ProviderFinder.new(middleware_name, value_name).find_chain
+
+      if chains.size > 1
+        puts "Value `#{value_name}` is provided to `#{middleware_name}` " \
+          "by multiple middleware chains:\n\n"
+      else
+        puts "Value `#{value_name}` is provided to `#{middleware_name}` by:\n\n"
+      end
+
+      formatted_chains = chains.map do |chain|
+        chain.join(" -> ")
+      end.join("\n---\n")
+
+      puts formatted_chains
     end
   end
 end

@@ -30,32 +30,21 @@ module Coach
       end
 
       def find_chain
-        if Module.const_defined?(@middleware_name)
-          middleware = Module.const_get(@middleware_name)
-        else
-          raise "That middleware doesn't exist!"
-        end
+        enforce_middleware_exists!
+        middleware = Module.const_get(@middleware_name)
+
+        enforce_middleware_requires_value!(middleware)
 
         provider_chain = build_provider_chain(middleware, Hash.new { Set.new }, [])
 
         if provider_chain.key?(@value_name.to_sym)
           chains = provider_chain[@value_name.to_sym]
         else
-          raise "That value isn't provided!"
+          err = Errors::ValueNotProvidedError.new(@middleware_name, @value_name)
+          raise err
         end
 
-        if chains.size > 1
-          puts "Value `#{@value_name}` is provided to `#{@middleware_name}` " \
-            "by multiple middleware chains:\n\n"
-        else
-          puts "Value `#{@value_name}` is provided to `#{@middleware_name}` by:\n\n"
-        end
-
-        formatted_chains = chains.map do |chain|
-          chain.join(" -> ")
-        end.join("\n---\n")
-
-        puts formatted_chains
+        chains.map { |chain| chain.map(&:to_s).reverse }.to_set
       end
 
       private
