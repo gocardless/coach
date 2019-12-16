@@ -4,8 +4,8 @@ require "coach/middleware_item"
 
 module Coach
   class Middleware
-    def self.uses(middleware, config = {})
-      middleware_dependencies << MiddlewareItem.new(middleware, config)
+    def self.uses(middleware, config = {}, &block)
+      middleware_dependencies << MiddlewareItem.new(middleware, config, &block)
     end
 
     def self.middleware_dependencies

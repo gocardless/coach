@@ -10,13 +10,15 @@ module Coach
     def initialize(middleware, config = {})
       @middleware = middleware
       @config_value = config
+      @block = Proc.new if block_given?
     end
 
     def build_middleware(context, successor)
       @middleware.
         new(context,
             successor&.instrument,
-            config)
+            config,
+            &@block)
     end
 
     # Runs validation against the middleware chain, raising if any unmet dependencies are
