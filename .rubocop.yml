@@ -9,6 +9,11 @@ AllCops:
 Metrics/MethodLength:
   Max: 15
 
+# Even after some serious refactoring, the default of 15 can be hard to meet
+# if you favour saving intermediate state into well-named variables
+Metrics/AbcSize:
+  Max: 20
+
 Style/RescueStandardError:
   Exclude:
     - "*/**/*_spec.rb"

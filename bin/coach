@@ -1,0 +1,57 @@
+#!/usr/bin/env ruby
+
+require "slop"
+require "coach/cli/provider_finder"
+
+begin
+  require File.join(Dir.pwd, "config/environment")
+rescue LoadError
+  puts <<~EOS
+    Could not load your Rails app
+    =============================
+
+    Currently the coach CLI assumes you have a config/environment.rb file that
+    we can load. We believe this is true of Rails apps in general.
+
+    Please raise an issue if that's not the case!
+
+    https://github.com/gocardless/coach/issues
+  EOS
+  exit 1
+end
+
+Slop.parse do
+  command "find-provider" do
+    run do |_, args|
+      middleware_name, value_name = *args
+      raise ArgumentError, "middleware_name and value_name required" unless middleware_name && value_name
+
+      result = Coach::Cli::ProviderFinder.new(args[0], args[1]).find_provider
+
+      puts "Value `#{value_name}` is provided to `#{middleware_name}` by:\n\n"
+      puts result.to_a.join("\n")
+    end
+  end
+
+  command "find-chain" do
+    run do |_, args|
+      middleware_name, value_name = *args
+      raise ArgumentError, "middleware_name and value_name required" unless middleware_name && value_name
+
+      chains = Coach::Cli::ProviderFinder.new(middleware_name, value_name).find_chain
+
+      if chains.size > 1
+        puts "Value `#{value_name}` is provided to `#{middleware_name}` " \
+          "by multiple middleware chains:\n\n"
+      else
+        puts "Value `#{value_name}` is provided to `#{middleware_name}` by:\n\n"
+      end
+
+      formatted_chains = chains.map do |chain|
+        chain.join(" -> ")
+      end.join("\n---\n")
+
+      puts formatted_chains
+    end
+  end
+end
