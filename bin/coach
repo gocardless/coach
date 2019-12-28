@@ -23,11 +23,8 @@ end
 Slop.parse do
   command "find-provider" do
     run do |_, args|
-      unless args.length == 2
-        raise "Two args please!"
-      end
-      middleware_name = args[0]
-      value_name = args[1]
+      middleware_name, value_name = *args
+      raise ArgumentError, "middleware_name and value_name required" unless middleware_name && value_name
 
       result = Coach::Cli::ProviderFinder.new(args[0], args[1]).find_provider
 
@@ -38,11 +35,8 @@ Slop.parse do
 
   command "find-chain" do
     run do |_, args|
-      unless args.length == 2
-        raise "Two args please!"
-      end
-      middleware_name = args[0]
-      value_name = args[1]
+      middleware_name, value_name = *args
+      raise ArgumentError, "middleware_name and value_name required" unless middleware_name && value_name
 
       chains = Coach::Cli::ProviderFinder.new(middleware_name, value_name).find_chain
 
