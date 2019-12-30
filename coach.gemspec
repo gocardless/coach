@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "activesupport", ">= 4.2"
   # TODO: Find another CLI parser that supports subcommands
   # Slop v4 got rid of them :(
-  spec.add_dependency "slop", "~> 3.6"
+  spec.add_dependency "slop", ">= 3.6", "< 5.0"
 
   spec.add_development_dependency "gc_ruboconfig", "= 2.9.0"
   spec.add_development_dependency "pry", "~> 0.10"
