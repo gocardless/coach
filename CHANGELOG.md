@@ -4,6 +4,11 @@
 
 No unreleased changes.
 
+# 2.2.0 / 2019-01-08
+
+* [#68](https://github.com/gocardless/coach/pull/68) Add `coach` CLI and add
+  documentation to README
+
 # 2.1.0 / 2019-11-14
 
 * [#79](https://github.com/gocardless/coach/pull/79) RequestSerializer will now
