@@ -4,7 +4,7 @@
 
 No unreleased changes.
 
-# 2.2.0 / 2019-01-08
+# 2.2.0 / 2020-01-08
 
 * [#68](https://github.com/gocardless/coach/pull/68) Add `coach` CLI and add
   documentation to README
