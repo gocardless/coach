@@ -4,6 +4,10 @@
 
 No unreleased changes.
 
+# 2.2.1 / 2020-02-06
+
+* [#85](https://github.com/gocardless/coach/pull/85) Uses [commander](https://github.com/commander-rb/commander) for CLI option parsing
+
 # 2.2.0 / 2020-01-08
 
 * [#68](https://github.com/gocardless/coach/pull/68) Add `coach` CLI and add
@@ -135,4 +139,3 @@ consistent with other libraries. The previous names will work for now, but will 
 
 Initial public release. This library is in beta until it hits 1.0, so backwards
 incompatible changes may be made in minor version releases.
-
