@@ -1,57 +1,95 @@
 #!/usr/bin/env ruby
 
-require "slop"
 require "coach/cli/provider_finder"
+require "commander"
 
-begin
-  require File.join(Dir.pwd, "config/environment")
-rescue LoadError
-  puts <<~EOS
-    Could not load your Rails app
-    =============================
+module Coach
+  class CLI
+    extend Commander::Methods
 
-    Currently the coach CLI assumes you have a config/environment.rb file that
-    we can load. We believe this is true of Rails apps in general.
+    class << self
+      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      def run
+        program :version, Coach::VERSION
+        program :description,
+                "Coach's CLI to help understand the provide/require graph made up of " \
+                "all the middleware chains you've built using Coach.\n" \
+                "  More information at: https://github.com/gocardless/coach#coach-cli."
+        program :help_formatter, :compact
 
-    Please raise an issue if that's not the case!
+        never_trace!
 
-    https://github.com/gocardless/coach/issues
-  EOS
-  exit 1
-end
+        command "find-provider" do |c|
+          c.syntax = "bundle exec coach find-provider"
+          c.description =
+            "Given the name of a Coach middleware and a value that it requires, it " \
+            "outputs the name of the middleware that provides it."
 
-Slop.parse do
-  command "find-provider" do
-    run do |_, args|
-      middleware_name, value_name = *args
-      raise ArgumentError, "middleware_name and value_name required" unless middleware_name && value_name
+          c.action do |args, _|
+            load_config_environment
 
-      result = Coach::Cli::ProviderFinder.new(args[0], args[1]).find_provider
+            middleware_name, value_name = *args
+            raise ArgumentError, "middleware_name and value_name required" unless middleware_name && value_name
 
-      puts "Value `#{value_name}` is provided to `#{middleware_name}` by:\n\n"
-      puts result.to_a.join("\n")
-    end
-  end
+            result = Coach::Cli::ProviderFinder.new(args[0], args[1]).find_provider
 
-  command "find-chain" do
-    run do |_, args|
-      middleware_name, value_name = *args
-      raise ArgumentError, "middleware_name and value_name required" unless middleware_name && value_name
+            puts "Value `#{value_name}` is provided to `#{middleware_name}` by:\n\n"
+            puts result.to_a.join("\n")
+          end
+        end
 
-      chains = Coach::Cli::ProviderFinder.new(middleware_name, value_name).find_chain
+        command "find-chain" do |c|
+          c.syntax = "bundle exec coach find-chain"
+          c.description =
+            "Given the name of a Coach middleware and a value it requires, " \
+            "it outputs the chains of middleware between the specified middleware " \
+            "and the one that provides the required value."
 
-      if chains.size > 1
-        puts "Value `#{value_name}` is provided to `#{middleware_name}` " \
-          "by multiple middleware chains:\n\n"
-      else
-        puts "Value `#{value_name}` is provided to `#{middleware_name}` by:\n\n"
+          c.action do |args, _|
+            load_config_environment
+
+            middleware_name, value_name = *args
+            raise ArgumentError, "middleware_name and value_name required" unless middleware_name && value_name
+
+            chains = Coach::Cli::ProviderFinder.new(middleware_name, value_name).find_chain
+
+            if chains.size > 1
+              puts "Value `#{value_name}` is provided to `#{middleware_name}` " \
+                "by multiple middleware chains:\n\n"
+            else
+              puts "Value `#{value_name}` is provided to `#{middleware_name}` by:\n\n"
+            end
+
+            formatted_chains = chains.map do |chain|
+              chain.join(" -> ")
+            end.join("\n---\n")
+
+            puts formatted_chains
+          end
+        end
+
+        run!
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-      formatted_chains = chains.map do |chain|
-        chain.join(" -> ")
-      end.join("\n---\n")
+      def load_config_environment
+        require File.join(Dir.pwd, "config/environment")
+      rescue LoadError
+        puts <<~ERR
+          Could not load your Rails app
+          =============================
 
-      puts formatted_chains
+          Currently the coach CLI assumes you have a config/environment.rb file that
+          we can load. We believe this is true of Rails apps in general.
+
+          Please raise an issue if that's not the case!
+
+          https://github.com/gocardless/coach/issues
+        ERR
+        exit 1
+      end
     end
   end
 end
+
+Coach::CLI.run
