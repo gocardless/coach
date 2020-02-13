@@ -201,7 +201,7 @@ describe Coach::Cli::ProviderFinder do
         expect(provider_finder.find_chain).
           to eq([
             %w[FirstProvidingMiddleware FirstIntermediateMiddleware RequiringMiddleware],
-            %w[SecondProvidingMiddleware SecondIntermediateMiddleware RequiringMiddleware], # rubocop:disable Metrics/LineLength
+            %w[SecondProvidingMiddleware SecondIntermediateMiddleware RequiringMiddleware], # rubocop:disable Layout/LineLength
           ].to_set)
       end
     end
