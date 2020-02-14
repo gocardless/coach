@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "coach/cli/provider_finder"
+require "coach/version"
 require "commander"
 
 module Coach

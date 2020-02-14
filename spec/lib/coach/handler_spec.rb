@@ -19,19 +19,84 @@ describe Coach::Handler do
   before { Coach::Notifications.unsubscribe! }
 
   describe "#call" do
-    let(:a_double) { double }
-    let(:b_double) { double }
+    context "with multiple middleware" do
+      let(:a_double) { double }
+      let(:b_double) { double }
 
-    before do
-      terminal_middleware.uses(middleware_a, callback: a_double)
-      terminal_middleware.uses(middleware_b, callback: b_double)
+      before do
+        terminal_middleware.uses(middleware_a, callback: a_double)
+        terminal_middleware.uses(middleware_b, callback: b_double)
+      end
+
+      it "invokes all middleware in the chain" do
+        expect(a_double).to receive(:call)
+        expect(b_double).to receive(:call)
+        result = handler.call({})
+        expect(result).to eq(%w[A{} B{} Terminal{:handler=>true}])
+      end
     end
 
-    it "invokes all middleware in the chain" do
-      expect(a_double).to receive(:call)
-      expect(b_double).to receive(:call)
-      result = handler.call({})
-      expect(result).to eq(%w[A{} B{} Terminal{:handler=>true}])
+    describe "notifications" do
+      subject(:coach_events) do
+        events = []
+        subscription = ActiveSupport::Notifications.
+          subscribe(/\.coach$/) { |name, *_args| events << name }
+
+        handler.call({})
+        ActiveSupport::Notifications.unsubscribe(subscription)
+        events
+      end
+
+      before do
+        terminal_middleware.uses(middleware_a)
+
+        Coach::Notifications.subscribe!
+
+        # Prevent RequestSerializer from erroring due to insufficient request mock
+        allow(Coach::RequestSerializer).
+          to receive(:new).
+          and_return(instance_double("Coach::RequestSerializer", serialize: {}))
+      end
+
+      it { is_expected.to include("start_handler.coach") }
+      it { is_expected.to include("start_middleware.coach") }
+      it { is_expected.to include("request.coach") }
+      it { is_expected.to include("finish_middleware.coach") }
+      it { is_expected.to include("finish_handler.coach") }
+
+      context "when an exception is raised in the chain" do
+        subject(:coach_events) do
+          events = []
+          subscription = ActiveSupport::Notifications.
+            subscribe(/\.coach$/) do |name, *args|
+            events << [name, args.last]
+          end
+
+          begin
+            handler.call({})
+          rescue StandardError
+            :continue_anyway
+          end
+          ActiveSupport::Notifications.unsubscribe(subscription)
+          events
+        end
+
+        let(:explosive_action) { -> { raise "AH" } }
+
+        before { terminal_middleware.uses(middleware_a, callback: explosive_action) }
+
+        it "captures the error event with the metadata" do
+          expect(coach_events).
+            to include(["finish_handler.coach", hash_including(
+              response: { status: 500 },
+              metadata: { A: true },
+            )])
+        end
+
+        it "bubbles the error to the next handler" do
+          expect { handler.call({}) }.to raise_error(StandardError, "AH")
+        end
+      end
     end
   end
 
@@ -117,71 +182,6 @@ describe Coach::Handler do
       it "calls lambda with parent middlewares config" do
         expect(handler.build_request_chain(sequence, {}).call).
           to eq(%w[A{} C{:b=>true} D{} B{:b=>true} Terminal{}])
-      end
-    end
-  end
-
-  describe "#call" do
-    before { terminal_middleware.uses(middleware_a) }
-
-    describe "notifications" do
-      subject(:coach_events) do
-        events = []
-        subscription = ActiveSupport::Notifications.
-          subscribe(/\.coach$/) { |name, *_args| events << name }
-
-        handler.call({})
-        ActiveSupport::Notifications.unsubscribe(subscription)
-        events
-      end
-
-      before do
-        Coach::Notifications.subscribe!
-
-        # Prevent RequestSerializer from erroring due to insufficient request mock
-        allow(Coach::RequestSerializer).
-          to receive(:new).
-          and_return(instance_double("Coach::RequestSerializer", serialize: {}))
-      end
-
-      it { is_expected.to include("start_handler.coach") }
-      it { is_expected.to include("start_middleware.coach") }
-      it { is_expected.to include("request.coach") }
-      it { is_expected.to include("finish_middleware.coach") }
-      it { is_expected.to include("finish_handler.coach") }
-
-      context "when an exception is raised in the chain" do
-        subject(:coach_events) do
-          events = []
-          subscription = ActiveSupport::Notifications.
-            subscribe(/\.coach$/) do |name, *args|
-            events << [name, args.last]
-          end
-
-          begin
-            handler.call({})
-          rescue StandardError
-            :continue_anyway
-          end
-          ActiveSupport::Notifications.unsubscribe(subscription)
-          events
-        end
-
-        let(:explosive_action) { -> { raise "AH" } }
-
-        before { terminal_middleware.uses(middleware_a, callback: explosive_action) }
-
-        it "captures the error event with the metadata" do
-          expect(coach_events).
-            to include(["finish_handler.coach", hash_including(
-              response: { status: 500 },
-              metadata: { A: true },
-            )])
-        end
-
-        it "bubbles the error to the next handler" do
-          expect { handler.call({}) }.to raise_error(StandardError, "AH")
-        end
       end
     end
   end
