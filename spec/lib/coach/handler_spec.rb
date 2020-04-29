@@ -85,10 +85,10 @@ describe Coach::Handler do
 
         before { terminal_middleware.uses(middleware_a, callback: explosive_action) }
 
-        it "captures the error event with the metadata" do
+        it "captures the error event with the metadata and nil status" do
           expect(coach_events).
             to include(["finish_handler.coach", hash_including(
-              response: { status: 500 },
+              response: { status: 0, exception: instance_of(RuntimeError) },
               metadata: { A: true },
             )])
         end

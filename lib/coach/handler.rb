@@ -5,7 +5,7 @@ require "active_support/core_ext/object/try"
 
 module Coach
   class Handler
-    STATUS_CODE_FOR_EXCEPTIONS = 500
+    STATUS_CODE_FOR_EXCEPTIONS = 0
 
     def initialize(middleware, config = {})
       @root_item = MiddlewareItem.new(middleware, config)
@@ -34,6 +34,8 @@ module Coach
       instrument("finish_handler.coach", event) do
         begin
           response = chain.instrument.call
+        rescue StandardError => e
+          raise
         ensure
           # We want to populate the response and metadata fields after the middleware
           # chain has completed so that the end of the instrumentation can see them. The
@@ -43,7 +45,10 @@ module Coach
           # This way, the last finish_handler.coach event will have all the details.
           status = response.try(:first) || STATUS_CODE_FOR_EXCEPTIONS
           event.merge!(
-            response: { status: status },
+            response: {
+              status: status,
+              exception: e,
+            }.compact,
             metadata: context.fetch(:_metadata, {}),
           )
         end
