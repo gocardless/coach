@@ -2,7 +2,7 @@
 
 # Unreleased
 
-No unreleased changes.
+* [#90](https://github.com/gocardless/coach/pull/90) Instrument status `0` instead of `500` when Coach::Handler catches an exception
 
 # 2.2.1 / 2020-02-06
 
