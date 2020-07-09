@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "activesupport", ">= 4.2"
   spec.add_dependency "commander", "~> 4.5"
 
-  spec.add_development_dependency "gc_ruboconfig", "= 2.14.0"
+  spec.add_development_dependency "gc_ruboconfig", "= 2.15.0"
   spec.add_development_dependency "pry", "~> 0.10"
   spec.add_development_dependency "rspec", "~> 3.2"
   spec.add_development_dependency "rspec-its", "~> 1.2"
