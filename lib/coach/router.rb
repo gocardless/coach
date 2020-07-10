@@ -60,7 +60,7 @@ module Coach
 
     # Applies trait url to base, removing duplicate /'s
     def action_url(base, traits)
-      [base, traits[:url]].compact.join("/").gsub(%r{/+}, "/")
+      [base, traits[:url]].compact.join("/").squeeze("/")
     end
 
     # Turns a snake_case string/symbol into a CamelCase
