@@ -46,7 +46,8 @@ module Coach
       requirements.include?(provision)
     end
 
-    attr_reader :next_middleware, :config
+    attr_reader :_context, :next_middleware, :config
+    alias_method :context, :_context
 
     # Middleware gets access to a shared context, which is populated by other
     # middleware futher up the stack, a reference to the next middleware in

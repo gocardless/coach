@@ -76,4 +76,19 @@ describe Coach::Middleware do
       end
     end
   end
+
+  describe "#attributes" do
+    before { middleware_class.provides(:foo) }
+
+    context "context is initialized and assigned" do
+      it "checks alias of context to _context" do
+        expect(middleware_obj.context).to eq(context_)
+      end
+
+      it "assigns to context" do
+        expect { middleware_obj.provide(foo: "bar") }.
+          to change(middleware_obj, :context).from({}).to(foo: "bar")
+      end
+    end
+  end
 end
