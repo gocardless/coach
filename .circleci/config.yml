@@ -4,21 +4,9 @@ references:
   steps: &steps
     - checkout
 
-    - type: shell
-      name: Write RAILS_VERSION to a file so we can use it for caching purposes
-      command: echo "$RAILS_VERSION" > ~/RAILS_VERSION.txt
-
-    - type: cache-restore
-      key: coach-bundler-{{ checksum "coach.gemspec" }}-{{ checksum "~/RAILS_VERSION.txt" }}
-
     - run: gem install bundler -v 1.11.2
 
     - run: bundle install --path vendor/bundle
-
-    - type: cache-save
-      key: coach-bundler-{{ checksum "coach.gemspec" }}-{{ checksum "~/RAILS_VERSION.txt" }}
-      paths:
-        - vendor/bundle
 
     - type: shell
       command: |
@@ -33,36 +21,23 @@ references:
 
     - run: bundle exec rubocop
 jobs:
-  build-ruby24-rails515:
-    docker:
-      - image: ruby:2.4
-        environment:
-          - RAILS_VERSION=5.1.5
-    steps: *steps
-  build-ruby24-rails4210:
-    docker:
-      - image: ruby:2.4
-        environment:
-          - RAILS_VERSION=4.2.10
-    steps: *steps
-  build-ruby25-rails515:
+  build-ruby25:
     docker:
       - image: ruby:2.5
-        environment:
-          - RAILS_VERSION=5.1.5
     steps: *steps
-  build-ruby25-rails4210:
+  build-ruby26:
     docker:
-      - image: ruby:2.5
-        environment:
-          - RAILS_VERSION=4.2.10
+      - image: ruby:2.6
+    steps: *steps
+  build-ruby27:
+    docker:
+      - image: ruby:2.7
     steps: *steps
 
 workflows:
   version: 2
   tests:
     jobs:
-      - build-ruby24-rails515
-      - build-ruby24-rails4210
-      - build-ruby25-rails515
-      - build-ruby25-rails4210
+      - build-ruby25
+      - build-ruby26
+      - build-ruby27

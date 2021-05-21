@@ -23,7 +23,7 @@ To get started, just add Coach to your `Gemfile`, and then run `bundle`:
 gem 'coach'
 ```
 
-Coach works with Ruby versions 2.4 and onwards.
+Coach works with Ruby versions 2.5 and onwards.
 
 ## Coach by example
 
