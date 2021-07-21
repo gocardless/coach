@@ -59,6 +59,21 @@ Once you've booted Rails locally, the following should return `'hello world'`:
 $ curl -XGET http://localhost:3000/hello_world
 ```
 
+### Zeitwerk
+
+The new default autoloader in Rails 6+ is [Zeitwerk](https://github.com/fxn/zeitwerk), which removes
+support for autoloading constants during app boot, which that example would do - either you have to
+`require "hello_world"` in your routes file, or avoid referencing the `HelloWorld` constant until
+the app has booted. To avoid that, you can instead pass the module or middleware _name_ to
+`Handler.new`, for example:
+
+```ruby
+Example::Application.routes.draw do
+  match "/hello_world",
+        to: Coach::Handler.new("HelloWorld"),
+        via: :get
+```
+
 ### Building chains
 
 Suppose we didn't want just anybody to see our `HelloWorld` endpoint. In fact, we'd like
@@ -136,14 +151,15 @@ end
 # Inside config/routes.rb
 Example::Application.routes.draw do
   match "/hello_user",
-        to: Coach::Handler.new(HelloUser),
+        to: Coach::Handler.new("HelloUser"),
         via: :get
 end
 ```
 
-Coach analyses your middleware chains whenever a new `Handler` is created. If any
-middleware `requires :x` when its chain does not provide `:x`, we'll error out before the
-app even starts with the error:
+Coach analyses your middleware chains whenever a new `Handler` is created, or when the handler is
+first used if the route is being lazy-loaded (i.e., if you're passing a string name, instead of the
+route itself). If any middleware `requires :x` when its chain does not provide `:x`, we'll error out
+before the app even starts with the error:
 
 ```ruby
 Coach::Errors::MiddlewareDependencyNotMet: HelloUser requires keys [user] that are not provided by the middleware chain
@@ -269,6 +285,25 @@ users resource being mapped to:
 | `POST` | `/users`                     | Create new user                                |
 | `PUT`  | `/users/:id`                 | Update user details                            |
 | `POST` | `/users/:id/actions/disable` | Custom action routed to the given path suffix  |
+
+If you're using Zeitwerk, you can pass the name of the module to `#draw`, instead of the module
+itself.
+
+```ruby
+# config/routes.rb
+Example::Application.routes.draw do
+  router = Coach::Router.new(self)
+  router.draw("Routes::Users",
+              base: "/users",
+              actions: [
+                :index,
+                :show,
+                :create,
+                :update,
+                disable: { method: :post, url: "/:id/actions/disable" }
+              ])
+end
+```
 
 ## Rendering
 

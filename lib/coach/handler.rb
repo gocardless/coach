@@ -7,17 +7,20 @@ module Coach
   class Handler
     STATUS_CODE_FOR_EXCEPTIONS = 0
 
+    attr_reader :name
+
     def initialize(middleware, config = {})
-      @root_item = MiddlewareItem.new(middleware, config)
-      validate!
-    rescue Coach::Errors::MiddlewareDependencyNotMet => e
-      # Remove noise of validation stack trace, reset to the handler callsite
-      e.backtrace.clear.concat(Thread.current.backtrace)
-      raise e
+      @config = config
+      if middleware.is_a?(String)
+        @name = middleware
+      else
+        @middleware = middleware
+        @name = middleware.name
+        # This triggers validation of the middleware chain, to raise any errors early on.
+        root_item
+      end
     end
 
-    # Run validation on the root of the middleware chain
-    delegate :validate!, to: :@root_item
     delegate :publish, :instrument, :notifier, to: ActiveSupport::Notifications
 
     # The Rack interface to handler - builds a middleware chain based on
@@ -25,7 +28,7 @@ module Coach
     # rubocop:disable Metrics/MethodLength
     def call(env)
       context = { request: ActionDispatch::Request.new(env) }
-      sequence = build_sequence(@root_item, context)
+      sequence = build_sequence(root_item, context)
       chain = build_request_chain(sequence, context)
 
       event = build_event(context)
@@ -76,10 +79,24 @@ module Coach
     end
 
     def inspect
-      "#<Coach::Handler[#{@root_item.middleware.name}]>"
+      "#<Coach::Handler[#{name}]>"
     end
 
     private
+
+    attr_reader :config
+
+    def root_item
+      @root_item ||= MiddlewareItem.new(middleware, config).tap(&:validate!)
+    rescue Coach::Errors::MiddlewareDependencyNotMet => e
+      # Remove noise of validation stack trace, reset to the handler callsite
+      e.backtrace.clear.concat(Thread.current.backtrace)
+      raise e
+    end
+
+    def middleware
+      @middleware ||= ActiveSupport::Dependencies.constantize(name)
+    end
 
     # Remove middleware that have been included multiple times with the same
     # config, leaving only the first instance
@@ -89,10 +106,7 @@ module Coach
 
     # Event to send with notifications
     def build_event(context)
-      {
-        middleware: @root_item.middleware.name,
-        request: context[:request],
-      }
+      { middleware: name, request: context[:request] }
     end
   end
 end

@@ -10,13 +10,8 @@ describe Coach::Router do
 
   let(:mapper) { instance_double("ActionDispatch::Routing::Mapper") }
 
-  let(:resource_routes) do
-    routes_module = Module.new
-    %i[Index Show Create Update Destroy Refund].each do |class_name|
-      routes_module.const_set(class_name, Class.new)
-    end
-    routes_module
-  end
+  let(:routes) { %i[Index Show Create Update Destroy Refund] }
+  let(:resource_routes) { Routes::Thing }
 
   before do
     allow(Coach::Handler).to receive(:new) { |route| route }
@@ -83,6 +78,27 @@ describe Coach::Router do
 
       it "raises NameError" do
         expect { draw }.to raise_error(NameError)
+      end
+
+      context "when passing a string for the namespace" do
+        subject(:router) { described_class.new(mapper) }
+
+        let(:resource_routes) { Routes::Thing.name }
+
+        before do
+          allow(ActiveSupport::Dependencies).to receive(:constantize).and_call_original
+
+          routes.each do |class_name|
+            allow(ActiveSupport::Dependencies).to receive(:constantize).
+              with("Routes::Thing::#{class_name}").
+              and_return(Routes::Thing.const_get(class_name))
+          end
+        end
+
+        it "does not raise an error" do
+          expect(mapper).to receive(:match).with("/resource/:id/process", anything)
+          expect { draw }.to_not raise_error
+        end
       end
     end
   end
