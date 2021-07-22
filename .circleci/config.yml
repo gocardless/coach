@@ -57,6 +57,36 @@ jobs:
         environment:
           - RAILS_VERSION=4.2.10
     steps: *steps
+  build-ruby26-rails515:
+    docker:
+      - image: ruby:2.6
+        environment:
+          - RAILS_VERSION=5.1.5
+    steps: *steps
+  build-ruby27-rails515:
+    docker:
+      - image: ruby:2.7
+        environment:
+          - RAILS_VERSION=5.1.5
+    steps: *steps
+  build-ruby27-rails604:
+    docker:
+      - image: ruby:2.7
+        environment:
+          - RAILS_VERSION=6.0.4
+    steps: *steps
+  build-ruby27-rails614:
+    docker:
+      - image: ruby:2.7
+        environment:
+          - RAILS_VERSION=6.1.4
+    steps: *steps
+  build-ruby30-rails614:
+    docker:
+      - image: ruby:3.0
+        environment:
+          - RAILS_VERSION=6.1.4
+    steps: *steps
 
 workflows:
   version: 2
@@ -66,3 +96,8 @@ workflows:
       - build-ruby24-rails4210
       - build-ruby25-rails515
       - build-ruby25-rails4210
+      - build-ruby26-rails515
+      - build-ruby27-rails515
+      - build-ruby27-rails604
+      - build-ruby27-rails614
+      - build-ruby30-rails614
