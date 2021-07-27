@@ -21,23 +21,36 @@ references:
 
     - run: bundle exec rubocop
 jobs:
-  build-ruby25:
-    docker:
-      - image: ruby:2.5
-    steps: *steps
-  build-ruby26:
+  build-ruby26-rails515:
     docker:
       - image: ruby:2.6
+        environment:
+          - RAILS_VERSION=5.1.5
     steps: *steps
-  build-ruby27:
+  build-ruby27-rails515:
     docker:
       - image: ruby:2.7
+        environment:
+          - RAILS_VERSION=5.1.5
+    steps: *steps
+  build-ruby27-rails604:
+    docker:
+      - image: ruby:2.7
+        environment:
+          - RAILS_VERSION=6.0.4
+    steps: *steps
+  build-ruby27-rails614:
+    docker:
+      - image: ruby:2.7
+        environment:
+          - RAILS_VERSION=6.1.4
     steps: *steps
 
 workflows:
   version: 2
   tests:
     jobs:
-      - build-ruby25
-      - build-ruby26
-      - build-ruby27
+      - build-ruby26-rails515
+      - build-ruby27-rails515
+      - build-ruby27-rails604
+      - build-ruby27-rails614
