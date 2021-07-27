@@ -15,7 +15,7 @@ def build_middleware(name)
 
     def call
       config[:callback].call if config.include?(:callback)
-      log_metadata(Hash[name.to_sym, true])
+      log_metadata(**{ name.to_sym => true })
 
       response = [name + config.except(:callback).inspect.to_s]
 
