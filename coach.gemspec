@@ -28,7 +28,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.2"
   spec.add_development_dependency "rspec-its", "~> 1.2"
   spec.add_development_dependency "rspec_junit_formatter", "~> 0.4.0"
-  # 1.12 removed support for Ruby 2.4, which we still support. We can remove this pin
-  # when we drop support for Ruby 2.4.
-  spec.add_development_dependency "rubocop", "< 1.12"
 end
