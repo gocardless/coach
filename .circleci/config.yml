@@ -1,103 +1,64 @@
-version: 2
+---
+version: 2.1
 
 references:
-  steps: &steps
-    - checkout
+  bundle_install: &bundle_install
+    run:
+      name: Bundle
+      command: |
+        gem install bundler --no-document && \
+        bundle config set no-cache 'true' && \
+        bundle config set jobs '4' && \
+        bundle config set retry '3' && \
+        bundle install
 
-    - type: shell
-      name: Write RAILS_VERSION to a file so we can use it for caching purposes
-      command: echo "$RAILS_VERSION" > ~/RAILS_VERSION.txt
-
-    - type: cache-restore
-      key: coach-bundler-{{ checksum "coach.gemspec" }}-{{ checksum "~/RAILS_VERSION.txt" }}
-
-    - run: gem install bundler -v 1.11.2
-
-    - run: bundle install --path vendor/bundle
-
-    - type: cache-save
-      key: coach-bundler-{{ checksum "coach.gemspec" }}-{{ checksum "~/RAILS_VERSION.txt" }}
+  cache_bundle: &cache_bundle
+    save_cache:
+      key: bundle-<< parameters.ruby_version >>-<< parameters.rails_version >>-{{ checksum "coach.gemspec" }}-{{ checksum "Gemfile" }}
       paths:
         - vendor/bundle
 
-    - type: shell
-      command: |
-        bundle exec rspec --profile 10 \
-                          --format RspecJunitFormatter \
-                          --out /tmp/test-results/rspec.xml \
-                          --format progress \
-                          spec
+  restore_bundle: &restore_bundle
+    restore_cache:
+      key: bundle-<< parameters.ruby_version >>-<< parameters.rails_version >>-{{ checksum "coach.gemspec" }}-{{ checksum "Gemfile" }}
 
-    - type: store_test_results
-      path: /tmp/test-results
-
-    - run: bundle exec rubocop
 jobs:
-  build-ruby24-rails515:
+  rspec:
+    working_directory: /mnt/ramdisk
+    parameters:
+      ruby_version:
+        type: string
+      rails_version:
+        type: string
     docker:
-      - image: ruby:2.4
+      - image: cimg/ruby:<< parameters.ruby_version >>
         environment:
-          - RAILS_VERSION=5.1.5
-    steps: *steps
-  build-ruby24-rails4210:
-    docker:
-      - image: ruby:2.4
-        environment:
-          - RAILS_VERSION=4.2.10
-    steps: *steps
-  build-ruby25-rails515:
-    docker:
-      - image: ruby:2.5
-        environment:
-          - RAILS_VERSION=5.1.5
-    steps: *steps
-  build-ruby25-rails4210:
-    docker:
-      - image: ruby:2.5
-        environment:
-          - RAILS_VERSION=4.2.10
-    steps: *steps
-  build-ruby26-rails515:
-    docker:
-      - image: ruby:2.6
-        environment:
-          - RAILS_VERSION=5.1.5
-    steps: *steps
-  build-ruby27-rails515:
-    docker:
-      - image: ruby:2.7
-        environment:
-          - RAILS_VERSION=5.1.5
-    steps: *steps
-  build-ruby27-rails604:
-    docker:
-      - image: ruby:2.7
-        environment:
-          - RAILS_VERSION=6.0.4
-    steps: *steps
-  build-ruby27-rails614:
-    docker:
-      - image: ruby:2.7
-        environment:
-          - RAILS_VERSION=6.1.4
-    steps: *steps
-  build-ruby30-rails614:
-    docker:
-      - image: ruby:3.0
-        environment:
-          - RAILS_VERSION=6.1.4
-    steps: *steps
+          CIRCLE_TEST_REPORTS: /tmp/circle_artifacts/
+    steps:
+      - add_ssh_keys
+      - checkout
+      - *restore_bundle
+      - *bundle_install
+      - *cache_bundle
+      - run:
+          name: Run specs
+          command: |
+            bundle exec rspec $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings) --profile --format progress --format RspecJunitFormatter -o /tmp/circle_artifacts/rspec.xml
+      - run:
+          name: "Rubocop"
+          command: bundle exec rubocop --extra-details --display-style-guide --parallel --force-exclusion
+      - store_artifacts:
+          path: /tmp/circle_artifacts/
+      - store_test_results:
+          path: /tmp/circle_artifacts/
 
 workflows:
   version: 2
   tests:
     jobs:
-      - build-ruby24-rails515
-      - build-ruby24-rails4210
-      - build-ruby25-rails515
-      - build-ruby25-rails4210
-      - build-ruby26-rails515
-      - build-ruby27-rails515
-      - build-ruby27-rails604
-      - build-ruby27-rails614
-      - build-ruby30-rails614
+      - rspec:
+          matrix:
+            parameters:
+              ruby_version: ["2.5", "2.6", "2.7", "3.0"]
+              rails_version: ["5.2.6", "6.0.4", "6.1.4"]
+
