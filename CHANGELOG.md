@@ -12,7 +12,7 @@
 
 ## Breaking changes
 
-* Remove Ruby 2.4 support
+* Remove Ruby 2.4 and 2.5 support
 
 # 2.3.0 / 2020-04-29
 
