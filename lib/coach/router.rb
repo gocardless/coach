@@ -17,14 +17,11 @@ module Coach
       @mapper = mapper
     end
 
-    def draw(routes, base: nil, as: nil, constraints: nil, actions: [])
+    def draw(namespace, base: nil, as: nil, constraints: nil, actions: [])
       action_traits(actions).each do |action, traits|
-        # Passing false to const_get prevents it searching ancestors until a
-        # match is found. Without this, globally defined constants such as
-        # `Process` will be picked up before consts that need to be autoloaded.
-        route = routes.const_get(camel(action), false)
+        handler = build_handler(namespace, action)
         match(action_url(base, traits),
-              to: Handler.new(route),
+              to: handler,
               via: traits[:method],
               as: as,
               constraints: constraints)
@@ -36,6 +33,20 @@ module Coach
     end
 
     private
+
+    def build_handler(namespace, action)
+      action_name = camel(action)
+
+      if namespace.is_a?(String)
+        route_name = "#{namespace}::#{action_name}"
+        Handler.new(route_name)
+      else
+        # Passing false to const_get prevents it searching ancestors until a
+        # match is found. Without this, globally defined constants such as
+        # `Process` will be picked up before consts that need to be autoloaded.
+        Handler.new(namespace.const_get(action_name, false))
+      end
+    end
 
     # Receives an array of symbols that represent actions for which the default traits
     # should be used, and then lastly an optional trait configuration.

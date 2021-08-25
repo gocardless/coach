@@ -5,6 +5,10 @@ require "pry"
 require "coach"
 require "coach/rspec"
 
+Dir[Pathname(__FILE__).dirname.join("support", "**", "*.rb")].
+  sort.
+  each { |path| require path }
+
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true

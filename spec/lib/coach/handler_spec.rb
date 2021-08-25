@@ -20,8 +20,8 @@ describe Coach::Handler do
 
   describe "#call" do
     context "with multiple middleware" do
-      let(:a_double) { double }
-      let(:b_double) { double }
+      let(:a_double) { double.as_null_object }
+      let(:b_double) { double.as_null_object }
 
       before do
         terminal_middleware.uses(middleware_a, callback: a_double)
@@ -33,6 +33,54 @@ describe Coach::Handler do
         expect(b_double).to receive(:call)
         result = handler.call({})
         expect(result).to eq(%w[A{} B{} Terminal{:handler=>true}])
+      end
+
+      context "with an invalid chain" do
+        before { terminal_middleware.requires(:not_available) }
+
+        it "raises an error" do
+          expect { handler }.to raise_error(Coach::Errors::MiddlewareDependencyNotMet)
+        end
+      end
+
+      context "lazy-loading the middleware" do
+        subject(:handler) { described_class.new(terminal_middleware.name, handler: true) }
+
+        before do
+          allow(ActiveSupport::Dependencies).to receive(:constantize).and_call_original
+          allow(ActiveSupport::Dependencies).to receive(:constantize).
+            with(terminal_middleware.name).
+            and_return(terminal_middleware)
+        end
+
+        it "does not load the route when initialized" do
+          expect(ActiveSupport::Dependencies).
+            to_not receive(:constantize).with(terminal_middleware.name)
+
+          handler
+        end
+
+        it "calls through the middleware chain" do
+          expect(a_double).to receive(:call)
+          expect(b_double).to receive(:call)
+
+          result = handler.call({})
+
+          expect(result).to eq(%w[A{} B{} Terminal{:handler=>true}])
+        end
+
+        context "with an invalid chain" do
+          before { terminal_middleware.requires(:not_available) }
+
+          it "does not raise on initialize" do
+            expect { handler }.to_not raise_error
+          end
+
+          it "raises on first call" do
+            expect { handler.call({}) }.
+              to raise_error(Coach::Errors::MiddlewareDependencyNotMet)
+          end
+        end
       end
     end
 

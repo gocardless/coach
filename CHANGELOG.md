@@ -2,6 +2,10 @@
 
 # Unreleased
 
+* [#105](https://github.com/gocardless/coach/pull/105) Add support for module/class names to be
+  passed to `Handler.new` and `Router#draw` to allow routes to be defined without loading the routes
+  constants, which makes using Zeitwerk much easier.
+
 # 2.3.0 / 2020-04-29
 
 * [#90](https://github.com/gocardless/coach/pull/90) Instrument status `0` instead of `500` when Coach::Handler catches an exception
