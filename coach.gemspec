@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/gocardless/coach"
   spec.email         = %w[developers@gocardless.com]
   spec.license       = "MIT"
-  spec.required_ruby_version = ">= 2.4"
+  spec.required_ruby_version = ">= 2.6"
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.test_files    = spec.files.grep(%r{^spec/})
@@ -23,12 +23,10 @@ Gem::Specification.new do |spec|
   spec.add_dependency "activesupport", ">= 4.2"
   spec.add_dependency "commander", "~> 4.5"
 
-  spec.add_development_dependency "gc_ruboconfig", "= 2.18.0"
+  spec.add_development_dependency "gc_ruboconfig", "~> 2.18.0"
   spec.add_development_dependency "pry", "~> 0.10"
   spec.add_development_dependency "rspec", "~> 3.2"
   spec.add_development_dependency "rspec-its", "~> 1.2"
   spec.add_development_dependency "rspec_junit_formatter", "~> 0.4.0"
-  # 1.12 removed support for Ruby 2.4, which we still support. We can remove this pin
-  # when we drop support for Ruby 2.4.
-  spec.add_development_dependency "rubocop", "< 1.12"
+  spec.add_development_dependency "rubocop", "~> 1.12"
 end

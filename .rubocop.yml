@@ -4,7 +4,7 @@ inherit_gem:
   gc_ruboconfig: rubocop.yml
 
 AllCops:
-  TargetRubyVersion: 2.4
+  TargetRubyVersion: 3.0
 
 Metrics/MethodLength:
   Max: 15
@@ -26,3 +26,6 @@ Naming/MethodParameterName:
     # These are some custom names that we want to allow, since they aren't
     # uncommunicative - they're actually rather meaningful!
     - as
+
+Gemspec/RequiredRubyVersion:
+  Enabled: False

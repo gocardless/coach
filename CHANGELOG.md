@@ -2,9 +2,17 @@
 
 # Unreleased
 
+# 3.0.0 / 2021-09-09
+
 * [#105](https://github.com/gocardless/coach/pull/105) Add support for module/class names to be
   passed to `Handler.new` and `Router#draw` to allow routes to be defined without loading the routes
   constants, which makes using Zeitwerk much easier.
+
+* Add Ruby 3 support
+
+## Breaking changes
+
+* Remove Ruby 2.4 and 2.5 support
 
 # 2.3.0 / 2020-04-29
 
