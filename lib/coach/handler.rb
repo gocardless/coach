@@ -93,7 +93,11 @@ module Coach
     end
 
     def middleware
-      @middleware ||= ActiveSupport::Dependencies.constantize(name)
+      @middleware ||= if ActiveSupport::Dependencies.respond_to?(:constantize)
+                        ActiveSupport::Dependencies.constantize(name)
+                      else
+                        name.constantize
+                      end
     end
 
     # Remove middleware that have been included multiple times with the same
