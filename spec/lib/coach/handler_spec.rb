@@ -47,14 +47,14 @@ describe Coach::Handler do
         subject(:handler) { described_class.new(terminal_middleware.name, handler: true) }
 
         before do
-          allow(ActiveSupport::Dependencies).to receive(:constantize).and_call_original
-          allow(ActiveSupport::Dependencies).to receive(:constantize).
+          allow(ActiveSupport::Inflector).to receive(:constantize).and_call_original
+          allow(ActiveSupport::Inflector).to receive(:constantize).
             with(terminal_middleware.name).
             and_return(terminal_middleware)
         end
 
         it "does not load the route when initialized" do
-          expect(ActiveSupport::Dependencies).
+          expect(ActiveSupport::Inflector).
             to_not receive(:constantize).with(terminal_middleware.name)
 
           handler
