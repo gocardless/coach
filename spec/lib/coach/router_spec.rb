@@ -86,10 +86,10 @@ describe Coach::Router do
         let(:resource_routes) { Routes::Thing.name }
 
         before do
-          allow(ActiveSupport::Dependencies).to receive(:constantize).and_call_original
+          allow(ActiveSupport::Inflector).to receive(:constantize).and_call_original
 
           routes.each do |class_name|
-            allow(ActiveSupport::Dependencies).to receive(:constantize).
+            allow(ActiveSupport::Inflector).to receive(:constantize).
               with("Routes::Thing::#{class_name}").
               and_return(Routes::Thing.const_get(class_name))
           end
