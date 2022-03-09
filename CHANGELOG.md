@@ -2,6 +2,10 @@
 
 # Unreleased
 
+# 3.0.1 / 2022-03-09
+
+* [#120](https://github.com/gocardless/coach/pull/120) Fixes missing method from middleware in Rails 7
+
 # 3.0.0 / 2021-09-09
 
 * [#105](https://github.com/gocardless/coach/pull/105) Add support for module/class names to be
