@@ -1,6 +1,9 @@
 # frozen_string_literal: true
+require "opentelemetry/sdk"
 
 require "coach/middleware_item"
+
+require "opentelemetry/sdk"
 
 module Coach
   class Middleware
@@ -63,6 +66,10 @@ module Coach
       @_context[:request]
     end
 
+    def tracer
+      @_context[:tracer] || OpenTelemetry.tracer_provider.tracer("coach", Coach::VERSION)
+    end
+
     # Make values available to middleware further down the stack. Accepts a
     # hash of name => value pairs. Names must have been declared by calling
     # `provides` on the class.
@@ -79,10 +86,13 @@ module Coach
     # Use ActiveSupport to instrument the execution of the subsequent chain.
     def instrument
       proc do
-        ActiveSupport::Notifications.publish("start_middleware.coach", middleware_event)
-
-        ActiveSupport::Notifications.
-          instrument("finish_middleware.coach", middleware_event) { call }
+        tracer.in_span("Coach::Middleware #{self.class.name}") do
+          ActiveSupport::Notifications.publish("start_middleware.coach", middleware_event)
+          ActiveSupport::Notifications.instrument("finish_middleware.coach",
+                                                  middleware_event) do
+            call
+          end
+        end
       end
     end
 

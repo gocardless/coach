@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "actionpack", ">= 4.2"
   spec.add_dependency "activesupport", ">= 4.2"
   spec.add_dependency "commander", "~> 4.5"
+  spec.add_dependency "opentelemetry-sdk"
 
   spec.add_development_dependency "gc_ruboconfig", "~> 2.18.0"
   spec.add_development_dependency "pry", "~> 0.10"
@@ -29,4 +30,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec-its", "~> 1.2"
   spec.add_development_dependency "rspec_junit_formatter", "~> 0.4.0"
   spec.add_development_dependency "rubocop", "~> 1.12"
+  spec.add_development_dependency "rack", "~> 2.2"
 end

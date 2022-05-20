@@ -5,6 +5,7 @@ require "coach/notifications"
 
 describe Coach::Notifications do
   subject(:notifications) { described_class.instance }
+  let(:request) { Rack::MockRequest.env_for("https://example.com:8080/full/path?query=string", {"REMOTE_ADDR" => "10.10.10.10"}) }
 
   before do
     described_class.unsubscribe!
@@ -47,12 +48,12 @@ describe Coach::Notifications do
     end
 
     it "will now send request.coach" do
-      handler.call({})
+      handler.call(request)
       expect(middleware_event).to_not be_nil
     end
 
     describe "request.coach event" do
-      before { handler.call({}) }
+      before { handler.call(request) }
 
       it "contains all middleware that have been run" do
         middleware_names = middleware_event[:chain].map { |item| item[:name] }
@@ -70,13 +71,13 @@ describe Coach::Notifications do
     it "disables any prior subscriptions" do
       notifications.subscribe!
 
-      handler.call({})
+      handler.call(request)
       expect(events.count { |(name, _)| name == "request.coach" }).
         to eq(1)
 
       notifications.unsubscribe!
 
-      handler.call({})
+      handler.call(request)
       expect(events.count { |(name, _)| name == "request.coach" }).
         to eq(1)
     end
