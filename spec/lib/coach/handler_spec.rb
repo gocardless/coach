@@ -9,6 +9,8 @@ require "coach/errors"
 describe Coach::Handler do
   subject(:handler) { described_class.new(terminal_middleware, handler: true) }
 
+
+  let(:request) { Rack::MockRequest.env_for("https://example.com:8080/full/path?query=string", {"REMOTE_ADDR" => "10.10.10.10"}) }
   let(:middleware_a) { build_middleware("A") }
   let(:middleware_b) { build_middleware("B") }
   let(:middleware_c) { build_middleware("C") }
@@ -31,7 +33,7 @@ describe Coach::Handler do
       it "invokes all middleware in the chain" do
         expect(a_double).to receive(:call)
         expect(b_double).to receive(:call)
-        result = handler.call({})
+        result = handler.call(request)
         expect(result).to eq(%w[A{} B{} Terminal{:handler=>true}])
       end
 
@@ -64,7 +66,7 @@ describe Coach::Handler do
           expect(a_double).to receive(:call)
           expect(b_double).to receive(:call)
 
-          result = handler.call({})
+          result = handler.call(request)
 
           expect(result).to eq(%w[A{} B{} Terminal{:handler=>true}])
         end
@@ -77,10 +79,36 @@ describe Coach::Handler do
           end
 
           it "raises on first call" do
-            expect { handler.call({}) }.
+            expect { handler.call(request) }.
               to raise_error(Coach::Errors::MiddlewareDependencyNotMet)
           end
         end
+      end
+    end
+
+    describe "tracing" do
+      let(:exporter) { EXPORTER }
+      let(:spans) { exporter.finished_spans }
+      let(:handler_span) { spans.find{ |s| s.name == "Coach::Handler Terminal" } }
+      let(:parent_span) { spans.find { |s| s.span_id == handler_span.parent_span_id } }
+
+      before do
+        exporter.reset
+        terminal_middleware.uses(middleware_a)
+        handler.call(request)
+      end
+
+      it "includes the handler span" do
+        expect(spans.size).to eq(3)
+        expect(handler_span).to_not be_nil
+        expect(parent_span).to be_nil
+        expect(handler_span.attributes["http.method"]).to eq("GET")
+      end
+
+      it "includes middleware as a child span" do
+        child_span = spans.find{ |s| s.parent_span_id == handler_span.span_id }
+        expect(child_span).to_not be_nil
+        expect(child_span.name).to eq("Coach::Middleware A")
       end
     end
 
@@ -90,7 +118,7 @@ describe Coach::Handler do
         subscription = ActiveSupport::Notifications.
           subscribe(/\.coach$/) { |name, *_args| events << name }
 
-        handler.call({})
+        handler.call(request)
         ActiveSupport::Notifications.unsubscribe(subscription)
         events
       end
@@ -121,7 +149,7 @@ describe Coach::Handler do
           end
 
           begin
-            handler.call({})
+            handler.call(request)
           rescue StandardError
             :continue_anyway
           end
@@ -142,7 +170,7 @@ describe Coach::Handler do
         end
 
         it "bubbles the error to the next handler" do
-          expect { handler.call({}) }.to raise_error(StandardError, "AH")
+          expect { handler.call(request) }.to raise_error(StandardError, "AH")
         end
       end
     end

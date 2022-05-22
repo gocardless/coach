@@ -2,12 +2,22 @@
 
 require "rspec/its"
 require "pry"
+require "rack"
 require "coach"
 require "coach/rspec"
+require "opentelemetry/sdk"
 
 Dir[Pathname(__FILE__).dirname.join("support", "**", "*.rb")].
   sort.
   each { |path| require path }
+
+
+EXPORTER = OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new
+SPAN_PROCESSOR = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(EXPORTER)
+
+OpenTelemetry::SDK.configure do |c|
+  c.add_span_processor SPAN_PROCESSOR
+end
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

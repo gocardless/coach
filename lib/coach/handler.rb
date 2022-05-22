@@ -2,6 +2,7 @@
 
 require "coach/errors"
 require "active_support/core_ext/object/try"
+require "opentelemetry/sdk"
 
 module Coach
   class Handler
@@ -27,35 +28,50 @@ module Coach
     # the current request, and invokes it.
     # rubocop:disable Metrics/MethodLength
     def call(env)
-      context = { request: ActionDispatch::Request.new(env) }
+      request = ActionDispatch::Request.new(env)
+      context = { request: request, tracer: tracer }
       sequence = build_sequence(root_item, context)
       chain = build_request_chain(sequence, context)
 
       event = build_event(context)
 
-      publish("start_handler.coach", event.dup)
-      instrument("finish_handler.coach", event) do
-        response = chain.instrument.call
-      rescue StandardError => e
-        raise
-      ensure
-        # We want to populate the response and metadata fields after the middleware
-        # chain has completed so that the end of the instrumentation can see them. The
-        # simplest way to do this is pass the event by reference to ActiveSupport, then
-        # modify the hash to contain this detail before the instrumentation completes.
-        #
-        # This way, the last finish_handler.coach event will have all the details.
-        status = response.try(:first) || STATUS_CODE_FOR_EXCEPTIONS
-        event.merge!(
-          response: {
+      tracer.in_span("Coach::Handler #{name}", attributes: tracer_attributes(request),
+                                               kind: :server) do |span|
+        publish("start_handler.coach", event.dup)
+        instrument("finish_handler.coach", event) do
+          response = chain.instrument.call
+          span.set_attribute("http.status_code", response.try(:first))
+          response
+        rescue StandardError => e
+          raise
+        ensure
+          # We want to populate the response and metadata fields after the middleware
+          # chain has completed so that the end of the instrumentation can see them. The
+          # simplest way to do this is pass the event by reference to ActiveSupport, then
+          # modify the hash to contain this detail before the instrumentation completes.
+          #
+          # This way, the last finish_handler.coach event will have all the details.
+          status = response.try(:first) || STATUS_CODE_FOR_EXCEPTIONS
+          event[:response] = {
             status: status,
             exception: e,
-          }.compact,
-          metadata: context.fetch(:_metadata, {}),
-        )
+          }.compact
+          event[:metadata] = context.fetch(:_metadata, {})
+          # span.set_attribute("http.status_code", status)
+          span.record_exception(e) unless e.nil?
+        end
       end
     end
     # rubocop:enable Metrics/MethodLength
+
+    def tracer_attributes(request)
+      {
+        "http.method"=> request.method,
+        "http.url"=> request.original_url,
+        "http.target"=> request.original_fullpath,
+        "http.user_agent"=> request.headers["user-agent"],
+      }.compact
+    end
 
     # Traverse the middlware tree to build a linear middleware sequence,
     # containing only middlewares that apply to this request.
@@ -94,6 +110,10 @@ module Coach
 
     def middleware
       @middleware ||= ActiveSupport::Inflector.constantize(name)
+    end
+
+    def tracer
+      @tracer ||= OpenTelemetry.tracer_provider.tracer("coach", Coach::VERSION)
     end
 
     # Remove middleware that have been included multiple times with the same
