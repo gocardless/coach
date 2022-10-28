@@ -8,7 +8,7 @@ require "coach/handler"
 describe Coach::Router do
   subject(:router) { described_class.new(mapper) }
 
-  let(:mapper) { instance_double("ActionDispatch::Routing::Mapper") }
+  let(:mapper) { instance_double(ActionDispatch::Routing::Mapper) }
 
   let(:routes) { %i[Index Show Create Update Destroy Refund] }
   let(:resource_routes) { Routes::Thing }

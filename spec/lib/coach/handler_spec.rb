@@ -103,7 +103,7 @@ describe Coach::Handler do
         # Prevent RequestSerializer from erroring due to insufficient request mock
         allow(Coach::RequestSerializer).
           to receive(:new).
-          and_return(instance_double("Coach::RequestSerializer", serialize: {}))
+          and_return(instance_double(Coach::RequestSerializer, serialize: {}))
       end
 
       it { is_expected.to include("start_handler.coach") }

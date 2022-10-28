@@ -71,7 +71,7 @@ module Coach
         [key, self.class.apply_header_rule(key, value)] if key
       end.compact
 
-      Hash[header_value_pairs]
+      header_value_pairs.to_h
     end
   end
 end

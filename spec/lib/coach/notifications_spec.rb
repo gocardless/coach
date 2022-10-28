@@ -12,7 +12,7 @@ describe Coach::Notifications do
     # Remove need to fully mock a request object
     allow(Coach::RequestSerializer).
       to receive(:new).
-      and_return(instance_double("Coach::RequestSerializer", serialize: {}))
+      and_return(instance_double(Coach::RequestSerializer, serialize: {}))
 
     ActiveSupport::Notifications.subscribe(/\.coach$/) do |name, *_, event|
       events << [name, event]

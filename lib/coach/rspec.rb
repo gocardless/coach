@@ -45,7 +45,7 @@ RSpec::Matchers.define :respond_with_status do |expected_status|
 
   failure_message do |_actual|
     "expected #{@middleware.class.name} to respond with #{expected_status} but got " \
-    "#{@response[0]}"
+      "#{@response[0]}"
   end
 end
 
@@ -71,7 +71,7 @@ RSpec::Matchers.define :respond_with_envelope do |envelope, keys = []|
 
   failure_message do |_actual|
     "expected that \"#{@response}\" would have envelope \"#{envelope}\" that matches " \
-    "hash_including(#{keys})"
+      "hash_including(#{keys})"
   end
 end
 
@@ -84,7 +84,7 @@ RSpec::Matchers.define :respond_with_header do |header, value_regex|
 
   failure_message do |_actual|
     "expected #{header} header in response to match #{value_regex} but found " \
-    "\"#{@header_value}\""
+      "\"#{@header_value}\""
   end
 end
 

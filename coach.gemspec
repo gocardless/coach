@@ -15,7 +15,6 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 2.6"
 
   spec.files         = `git ls-files -z`.split("\x0")
-  spec.test_files    = spec.files.grep(%r{^spec/})
   spec.require_paths = ["lib"]
   spec.executables   = ["coach"]
 
@@ -23,10 +22,10 @@ Gem::Specification.new do |spec|
   spec.add_dependency "activesupport", ">= 4.2"
   spec.add_dependency "commander", "~> 4.5"
 
-  spec.add_development_dependency "gc_ruboconfig", "~> 2.18.0"
+  spec.add_development_dependency "gc_ruboconfig", "~> 3.6"
   spec.add_development_dependency "pry", "~> 0.10"
   spec.add_development_dependency "rspec", "~> 3.2"
+  spec.add_development_dependency "rspec-github", "~> 2.3.1"
   spec.add_development_dependency "rspec-its", "~> 1.2"
-  spec.add_development_dependency "rspec_junit_formatter", "~> 0.4.0"
-  spec.add_development_dependency "rubocop", "~> 1.12"
+  spec.metadata["rubygems_mfa_required"] = "true"
 end
