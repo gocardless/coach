@@ -42,12 +42,12 @@ describe Coach::RequestSerializer do
       subject(:request_serializer) { described_class.new(mock_request) }
 
       let(:mock_request) do
-        instance_double("ActionDispatch::Request", format: nil,
-                                                   remote_ip: nil,
-                                                   uuid: nil,
-                                                   method: nil,
-                                                   filtered_parameters: nil,
-                                                   filtered_env: filtered_env)
+        instance_double(ActionDispatch::Request, format: nil,
+                                                 remote_ip: nil,
+                                                 uuid: nil,
+                                                 method: nil,
+                                                 filtered_parameters: nil,
+                                                 filtered_env: filtered_env)
       end
 
       let(:filtered_env) do

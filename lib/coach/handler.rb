@@ -25,7 +25,6 @@ module Coach
 
     # The Rack interface to handler - builds a middleware chain based on
     # the current request, and invokes it.
-    # rubocop:disable Metrics/MethodLength
     def call(env)
       context = { request: ActionDispatch::Request.new(env) }
       sequence = build_sequence(root_item, context)
@@ -55,7 +54,6 @@ module Coach
         )
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     # Traverse the middlware tree to build a linear middleware sequence,
     # containing only middlewares that apply to this request.
