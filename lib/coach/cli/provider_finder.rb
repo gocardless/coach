@@ -44,7 +44,7 @@ module Coach
           raise err
         end
 
-        chains.map { |chain| chain.map(&:to_s).reverse }.to_set
+        chains.to_set { |chain| chain.map(&:to_s).reverse }
       end
 
       private

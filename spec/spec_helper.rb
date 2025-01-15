@@ -5,8 +5,8 @@ require "pry"
 require "coach"
 require "coach/rspec"
 
-Dir[Pathname(__FILE__).dirname.join("support", "**", "*.rb")].
-  sort.
+Dir[Pathname(__FILE__).dirname.join("support", "**", "*.rb")]
+  .
   each { |path| require path }
 
 RSpec.configure do |config|

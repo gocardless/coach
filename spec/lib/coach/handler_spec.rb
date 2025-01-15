@@ -158,7 +158,7 @@ describe Coach::Handler do
       before { terminal_middleware.uses(middleware_a) }
 
       it "assembles a sequence including all middleware" do
-        expect(sequence).to match_array([middleware_a, terminal_middleware])
+        expect(sequence).to contain_exactly(middleware_a, terminal_middleware)
       end
     end
 
@@ -170,8 +170,7 @@ describe Coach::Handler do
       end
 
       it "assembles a sequence including all middleware" do
-        expect(sequence).to match_array([middleware_c, middleware_b,
-                                         middleware_a, terminal_middleware])
+        expect(sequence).to contain_exactly(middleware_c, middleware_b, middleware_a, terminal_middleware)
       end
     end
 
@@ -184,17 +183,15 @@ describe Coach::Handler do
       end
 
       it "only appears once" do
-        expect(sequence).to match_array([middleware_c, middleware_a,
-                                         middleware_b, terminal_middleware])
+        expect(sequence).to contain_exactly(middleware_c, middleware_a, middleware_b, terminal_middleware)
       end
 
       context "with a different config" do
         before { middleware_b.uses(middleware_c, foo: "bar") }
 
         it "appears more than once" do
-          expect(sequence).to match_array([middleware_c, middleware_a,
-                                           middleware_c, middleware_b,
-                                           terminal_middleware])
+          expect(sequence).to contain_exactly(middleware_c, middleware_a, middleware_c, middleware_b,
+                                              terminal_middleware)
         end
       end
     end
