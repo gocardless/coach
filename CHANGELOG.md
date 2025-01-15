@@ -2,6 +2,10 @@
 
 # Unreleased
 
+# 4.0.0 / 2025-01-15
+
+* Drop support for Rails < 7.0 and Ruby < 3.0
+
 # 3.0.1 / 2022-03-09
 
 * [#120](https://github.com/gocardless/coach/pull/120) Fixes missing method from middleware in Rails 7
