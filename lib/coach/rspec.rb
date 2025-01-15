@@ -17,7 +17,9 @@ def build_middleware(name)
       config[:callback].call if config.include?(:callback)
       log_metadata(**{ name.to_sym => true })
 
-      response = [name + config.except(:callback).inspect.to_s]
+      # Emulate newer hash syntax for older Ruby versions
+      hash_response = config.except(:callback).map { |k, v| "#{k}: #{v}" }.join(", ")
+      response = [name + "{#{hash_response}}"]
 
       # Build up a list of middleware called, in the order they were called
       if next_middleware

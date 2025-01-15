@@ -32,7 +32,7 @@ describe Coach::Handler do
         expect(a_double).to receive(:call)
         expect(b_double).to receive(:call)
         result = handler.call({})
-        expect(result).to eq(%w[A{} B{} Terminal{:handler=>true}])
+        expect(result).to eq(["A{}", "B{}", "Terminal{handler: true}"])
       end
 
       context "with an invalid chain" do
@@ -66,7 +66,7 @@ describe Coach::Handler do
 
           result = handler.call({})
 
-          expect(result).to eq(%w[A{} B{} Terminal{:handler=>true}])
+          expect(result).to eq(["A{}", "B{}", "Terminal{handler: true}"])
         end
 
         context "with an invalid chain" do
@@ -215,7 +215,7 @@ describe Coach::Handler do
 
     it "sets up the chain correctly, calling each item in the correct order" do
       expect(handler.build_request_chain(sequence, {}).call).
-        to eq(%w[A{} B{:b=>true} Terminal{}])
+        to eq(["A{}", "B{b: true}", "Terminal{}"])
     end
 
     context "with inheriting config" do
@@ -226,7 +226,7 @@ describe Coach::Handler do
 
       it "calls lambda with parent middlewares config" do
         expect(handler.build_request_chain(sequence, {}).call).
-          to eq(%w[A{} C{:b=>true} D{} B{:b=>true} Terminal{}])
+          to eq(["A{}", "C{b: true}", "D{}", "B{b: true}", "Terminal{}"])
       end
     end
   end
