@@ -32,7 +32,7 @@ describe Coach::Handler do
         expect(a_double).to receive(:call)
         expect(b_double).to receive(:call)
         result = handler.call({})
-        expect(result).to eq(%w[A{} B{} Terminal{:handler=>true}])
+        expect(result).to eq(["A{}", "B{}", "Terminal{handler: true}"])
       end
 
       context "with an invalid chain" do
@@ -66,7 +66,7 @@ describe Coach::Handler do
 
           result = handler.call({})
 
-          expect(result).to eq(%w[A{} B{} Terminal{:handler=>true}])
+          expect(result).to eq(["A{}", "B{}", "Terminal{handler: true}"])
         end
 
         context "with an invalid chain" do
@@ -158,7 +158,7 @@ describe Coach::Handler do
       before { terminal_middleware.uses(middleware_a) }
 
       it "assembles a sequence including all middleware" do
-        expect(sequence).to match_array([middleware_a, terminal_middleware])
+        expect(sequence).to contain_exactly(middleware_a, terminal_middleware)
       end
     end
 
@@ -170,8 +170,7 @@ describe Coach::Handler do
       end
 
       it "assembles a sequence including all middleware" do
-        expect(sequence).to match_array([middleware_c, middleware_b,
-                                         middleware_a, terminal_middleware])
+        expect(sequence).to contain_exactly(middleware_c, middleware_b, middleware_a, terminal_middleware)
       end
     end
 
@@ -184,17 +183,15 @@ describe Coach::Handler do
       end
 
       it "only appears once" do
-        expect(sequence).to match_array([middleware_c, middleware_a,
-                                         middleware_b, terminal_middleware])
+        expect(sequence).to contain_exactly(middleware_c, middleware_a, middleware_b, terminal_middleware)
       end
 
       context "with a different config" do
         before { middleware_b.uses(middleware_c, foo: "bar") }
 
         it "appears more than once" do
-          expect(sequence).to match_array([middleware_c, middleware_a,
-                                           middleware_c, middleware_b,
-                                           terminal_middleware])
+          expect(sequence).to contain_exactly(middleware_c, middleware_a, middleware_c, middleware_b,
+                                              terminal_middleware)
         end
       end
     end
@@ -218,7 +215,7 @@ describe Coach::Handler do
 
     it "sets up the chain correctly, calling each item in the correct order" do
       expect(handler.build_request_chain(sequence, {}).call).
-        to eq(%w[A{} B{:b=>true} Terminal{}])
+        to eq(["A{}", "B{b: true}", "Terminal{}"])
     end
 
     context "with inheriting config" do
@@ -229,7 +226,7 @@ describe Coach::Handler do
 
       it "calls lambda with parent middlewares config" do
         expect(handler.build_request_chain(sequence, {}).call).
-          to eq(%w[A{} C{:b=>true} D{} B{:b=>true} Terminal{}])
+          to eq(["A{}", "C{b: true}", "D{}", "B{b: true}", "Terminal{}"])
       end
     end
   end

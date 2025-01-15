@@ -46,9 +46,7 @@ module Coach
     def unsubscribe!
       return unless active?
 
-      while @subscriptions.any?
-        ActiveSupport::Notifications.unsubscribe(@subscriptions.pop)
-      end
+      ActiveSupport::Notifications.unsubscribe(@subscriptions.pop) while @subscriptions.any?
       true
     end
 

@@ -1,8 +1,6 @@
 # Coach
 
 [![Gem Version](https://badge.fury.io/rb/coach.svg)](http://badge.fury.io/rb/coach)
-[![CircleCI](https://circleci.com/gh/gocardless/coach.svg?style=svg)](https://circleci.com/gh/gocardless/coach)
-[![Code Climate](https://codeclimate.com/github/gocardless/coach.svg)](https://codeclimate.com/github/gocardless/coach)
 
 Coach improves your controller code by encouraging:
 
@@ -23,7 +21,7 @@ To get started, just add Coach to your `Gemfile`, and then run `bundle`:
 gem 'coach'
 ```
 
-Coach works with Ruby versions 2.6 and onwards.
+Coach works with Ruby versions 3.1 and onwards.
 
 ## Coach by example
 
@@ -278,13 +276,13 @@ end
 Default actions that conform to standard REST principles can be easily loaded, with the
 users resource being mapped to:
 
-| Method | URL                          | Description                                    |
-|--------|------------------------------|------------------------------------------------|
-| `GET`  | `/users`                     | Index all users                                |
-| `GET`  | `/users/:id`                 | Get user by ID                                 |
-| `POST` | `/users`                     | Create new user                                |
-| `PUT`  | `/users/:id`                 | Update user details                            |
-| `POST` | `/users/:id/actions/disable` | Custom action routed to the given path suffix  |
+| Method | URL                          | Description                                   |
+| ------ | ---------------------------- | --------------------------------------------- |
+| `GET`  | `/users`                     | Index all users                               |
+| `GET`  | `/users/:id`                 | Get user by ID                                |
+| `POST` | `/users`                     | Create new user                               |
+| `PUT`  | `/users/:id`                 | Update user details                           |
+| `POST` | `/users/:id/actions/disable` | Custom action routed to the given path suffix |
 
 If you're using Zeitwerk, you can pass the name of the module to `#draw`, instead of the module
 itself.
@@ -328,14 +326,13 @@ middleware.
 Information for how to use `ActiveSupport`s notifications can be found
 [here](http://api.rubyonrails.org/classes/ActiveSupport/Notifications.html).
 
-
-| Event                         | Arguments                                              |
-|-------------------------------|------------------------------------------------------- |
-| `start_handler.coach`     | `event(:middleware, :request)`                         |
-| `start_middleware.coach`  | `event(:middleware, :request)`                         |
-| `finish_middleware.coach` | `start`, `finish`, `id`, `event(:middleware, :request)`|
-| `finish_handler.coach`    | `start`, `finish`, `id`, `event(:middleware, :request)`|
-| `request.coach`           | `event` containing request data and benchmarking       |
+| Event                     | Arguments                                               |
+| ------------------------- | ------------------------------------------------------- |
+| `start_handler.coach`     | `event(:middleware, :request)`                          |
+| `start_middleware.coach`  | `event(:middleware, :request)`                          |
+| `finish_middleware.coach` | `start`, `finish`, `id`, `event(:middleware, :request)` |
+| `finish_handler.coach`    | `start`, `finish`, `id`, `event(:middleware, :request)` |
+| `request.coach`           | `event` containing request data and benchmarking        |
 
 Of special interest is `request.coach`, which publishes statistics on an entire
 middleware chain and request. This data is particularly useful for logging, and is our
@@ -435,14 +432,14 @@ around 15s to 1s.
 While we think the commands we've already built are useful, we do have some ideas to go
 further, including:
 
-  - Better formatting of provider chains
-  - Outputting DOT format files to visualise with Graphviz
-  - Editor integrations (e.g. showing the provider chains when hovering a `requires`
-    statement)
+- Better formatting of provider chains
+- Outputting DOT format files to visualise with Graphviz
+- Editor integrations (e.g. showing the provider chains when hovering a `requires`
+  statement)
 
 # License & Contributing
 
-* Coach is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-* Bug reports and pull requests are welcome on GitHub at https://github.com/gocardless/coach.
+- Coach is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+- Bug reports and pull requests are welcome on GitHub at https://github.com/gocardless/coach.
 
 GoCardless ♥ open source. If you do too, come [join us](https://gocardless.com/about/jobs).

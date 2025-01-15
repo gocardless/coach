@@ -61,7 +61,7 @@ module Coach
     end
 
     def filtered_headers
-      header_value_pairs = @request.filtered_env.map do |key, value|
+      header_value_pairs = @request.filtered_env.filter_map do |key, value|
         key = if RACK_UNPREFIXED_HEADERS.include?(key)
                 "http_#{key.downcase}"
               elsif key.start_with?("HTTP_")
@@ -69,7 +69,7 @@ module Coach
               end
 
         [key, self.class.apply_header_rule(key, value)] if key
-      end.compact
+      end
 
       header_value_pairs.to_h
     end

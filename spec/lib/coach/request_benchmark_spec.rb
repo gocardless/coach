@@ -8,7 +8,7 @@ describe Coach::RequestBenchmark do
 
   let(:base_time) { Time.now }
 
-  let(:start)     { base_time + 0 }
+  let(:start)     { base_time }
   let(:a_start)   { base_time + 1 }
   let(:b_start)   { base_time + 2 }
   let(:b_finish)  { base_time + 3 }
