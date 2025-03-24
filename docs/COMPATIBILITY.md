@@ -2,7 +2,7 @@
 
 Our goal as Coach maintainers is for the library to be compatible with all supported versions of Ruby and Rails.
 
-Specifically, any CRuby/MRI version that has not reached (End of Life)[https://endoflife.date/ruby] is supported. Similarly, any version of Rails listed as currently supported on [this page](https://endoflife.date/rails) is one we aim to support in Coach.
+Specifically, any CRuby/MRI version that has not reached [End of Life](https://endoflife.date/ruby) is supported. Similarly, any version of Rails listed as currently supported on [this page](https://endoflife.date/rails) is one we aim to support in Coach.
 
 To that end, [our build matrix](../.github/tests.yml) includes all these versions.
 
