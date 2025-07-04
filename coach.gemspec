@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "actionpack", ">= 7.0"
   spec.add_dependency "activesupport", ">= 7.0"
-  spec.add_dependency "commander", "~> 4.5"
+  spec.add_dependency "commander", ">= 4.5", "< 6.0"
 
   spec.metadata["rubygems_mfa_required"] = "true"
 end
