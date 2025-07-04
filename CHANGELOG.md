@@ -2,6 +2,11 @@
 
 # Unreleased
 
+# 4.0.1 / 2025-07-04
+
+* Bump `commander` runtime dependency version constraint to `< 6.0` due to deprecation of `abbrev` from Ruby standard library
+  * See https://github.com/commander-rb/commander/pull/102 for additional context
+
 # 4.0.0 / 2025-01-15
 
 * Drop support for Rails < 7.0 and Ruby < 3.0
