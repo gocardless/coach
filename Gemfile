@@ -10,5 +10,5 @@ group :development, :test do
   gem "rails", "~> #{ENV['RAILS_VERSION']}" if ENV["RAILS_VERSION"]
   gem "rspec", "~> 3.13"
   gem "rspec-github", "~> 3.0.0"
-  gem "rspec-its", "~> 1.2"
+  gem "rspec-its", "~> 2.0"
 end
