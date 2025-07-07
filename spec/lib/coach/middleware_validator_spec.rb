@@ -4,8 +4,6 @@ require "spec_helper"
 require "coach/middleware_validator"
 
 describe Coach::MiddlewareValidator do
-  subject(:validator) { described_class.new(head_middleware, already_provided) }
-
   let(:head_middleware) { build_middleware("Head") }
   let(:already_provided) { [] }
 
@@ -22,7 +20,7 @@ describe Coach::MiddlewareValidator do
   end
 
   describe "#validated_provides!" do
-    subject { -> { validator.validated_provides! } }
+    subject(:validator) { -> { described_class.new(head_middleware, already_provided).validated_provides! } }
 
     context "with satisfied requires" do
       context "one level deep" do
@@ -60,7 +58,9 @@ describe Coach::MiddlewareValidator do
       context "at terminal" do
         before { head_middleware.requires :a, :c }
 
-        it { is_expected.to raise_exception(/missing \[:a, :c\]/) }
+        it "raises an exception" do
+          expect { validator.call }.to raise_exception(/missing \[:a, :c\]/)
+        end
       end
 
       context "from unordered middleware" do
@@ -69,7 +69,9 @@ describe Coach::MiddlewareValidator do
           middleware_b.provides :b
         end
 
-        it { is_expected.to raise_exception(/missing \[:b\]/) }
+        it "raises an exception" do
+          expect { validator.call }.to raise_exception(/missing \[:b\]/)
+        end
       end
     end
   end
