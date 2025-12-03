@@ -2,6 +2,10 @@
 
 # Unreleased
 
+# 4.1.0 / 2025-12-03
+
+* Add support for Rails 8.1. Drop support for Rails 7.0, 7.1 and Ruby 3.1
+
 # 4.0.1 / 2025-07-04
 
 * Bump `commander` runtime dependency version constraint to `< 6.0` due to deprecation of `abbrev` from Ruby standard library
