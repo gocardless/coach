@@ -19,13 +19,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version: ["3.2", "3.3", "3.4"]
+        ruby-version: ["3.2", "3.3", "3.4", "4.0"]
         rails-version: ["7.2", "8.0", "8.1"]
     runs-on: ubuntu-latest
     env:
       RAILS_VERSION: ${{ matrix.rails-version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
