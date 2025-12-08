@@ -29,7 +29,7 @@ module Coach
     end
 
     def match(url, **args)
-      @mapper.match(url, args)
+      @mapper.match(url, **args)
     end
 
     private
